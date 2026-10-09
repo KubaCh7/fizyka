@@ -8,3 +8,7 @@ kinematyka z symulacją tarczy i wykresami, przykłady rozwiązywane krok po kro
 i podpowiedziami, najczęstsze błędy, quiz końcowy i ściąga do druku.
 
 Biblioteki z CDN (potrzebny internet): KaTeX 0.16.11 (wzory) i Chart.js 4.4.1 (wykresy).
+
+## Inne pliki
+
+- `gdd/Magnet_and_Steal_a_Brainrot_GDD.md` — Game Design Document gry na Robloxa „Magnet & Steal a Brainrot” (dokument po polsku, gra po angielsku).
