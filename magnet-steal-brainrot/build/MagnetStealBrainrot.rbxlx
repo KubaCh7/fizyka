@@ -1,0 +1,5582 @@
+<roblox version="4">
+  <Item class="Lighting" referent="0">
+    <Properties>
+      <string name="Name">Lighting</string>
+      <float name="Brightness">2</float>
+      <float name="ClockTime">14.5</float>
+    </Properties>
+  </Item>
+  <Item class="Players" referent="1">
+    <Properties>
+      <string name="Name">Players</string>
+    </Properties>
+  </Item>
+  <Item class="ReplicatedStorage" referent="2">
+    <Properties>
+      <string name="Name">ReplicatedStorage</string>
+    </Properties>
+    <Item class="Folder" referent="3">
+      <Properties>
+        <string name="Name">Remotes</string>
+      </Properties>
+      <Item class="RemoteEvent" referent="4">
+        <Properties>
+          <string name="Name">Alert</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="5">
+        <Properties>
+          <string name="Name">CastRequest</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="6">
+        <Properties>
+          <string name="Name">DevCheat</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="7">
+        <Properties>
+          <string name="Name">FishResult</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="8">
+        <Properties>
+          <string name="Name">FishStart</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="9">
+        <Properties>
+          <string name="Name">IndexUpdate</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="10">
+        <Properties>
+          <string name="Name">Notify</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="11">
+        <Properties>
+          <string name="Name">PlaceBanana</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteFunction" referent="12">
+        <Properties>
+          <string name="Name">Purchase</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="13">
+        <Properties>
+          <string name="Name">Ragdoll</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="14">
+        <Properties>
+          <string name="Name">StealRequest</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="15">
+        <Properties>
+          <string name="Name">TugEnd</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="16">
+        <Properties>
+          <string name="Name">TugStart</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="17">
+        <Properties>
+          <string name="Name">TugTap</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="18">
+        <Properties>
+          <string name="Name">TugUpdate</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="19">
+        <Properties>
+          <string name="Name">UseShield</string>
+        </Properties>
+      </Item>
+    </Item>
+    <Item class="Folder" referent="20">
+      <Properties>
+        <string name="Name">Shared</string>
+      </Properties>
+      <Item class="ModuleScript" referent="21">
+        <Properties>
+          <string name="Name">Brainrots</string>
+          <string name="Source"><![CDATA[--!strict
+-- Katalog Brainrotów: 5 stref x 6 rzadkości = 30 obiektów.
+-- weight = waga bazowa w kg (mnożona przez rzadkość i rozmiar).
+-- shape = kształt proceduralnego modelu (Ball, Block, Cylinder, Tall, Flat).
+
+export type Brainrot = {
+	id: string,
+	name: string,
+	zone: number,
+	rarity: string,
+	weight: number,
+	shape: string,
+	color: Color3,
+	accent: Color3,
+}
+
+local function c(r: number, g: number, b: number): Color3
+	return Color3.fromRGB(r, g, b)
+end
+
+local list: { Brainrot } = {
+	-- Strefa 1: Płycizna
+	{ id = "kapsel", name = "Kapsel Kapselini", zone = 1, rarity = "Common", weight = 4, shape = "Flat", color = c(160, 90, 50), accent = c(220, 220, 220) },
+	{ id = "srubapim", name = "Brr Brr Śrubapim", zone = 1, rarity = "Rare", weight = 8, shape = "Tall", color = c(120, 120, 130), accent = c(90, 160, 60) },
+	{ id = "hulajnoga", name = "Hulajnoga Sigma", zone = 1, rarity = "Epic", weight = 12, shape = "Block", color = c(40, 40, 45), accent = c(0, 200, 120) },
+	{ id = "rower", name = "Rower Taty (Poszedł po Mleko)", zone = 1, rarity = "Secret", weight = 10, shape = "Block", color = c(200, 40, 40), accent = c(240, 240, 240) },
+	{ id = "wozek", name = "Przeklęty Wózek Sklepowy", zone = 1, rarity = "Cursed", weight = 9, shape = "Block", color = c(90, 90, 100), accent = c(120, 255, 60) },
+	{ id = "zlotykapsel", name = "Złoty Kapsel Wszechświata", zone = 1, rarity = "Mythic", weight = 8, shape = "Flat", color = c(255, 210, 60), accent = c(255, 255, 255) },
+
+	-- Strefa 2: Śluza
+	{ id = "puszka", name = "Puszka Pusztini", zone = 2, rarity = "Common", weight = 20, shape = "Cylinder", color = c(180, 50, 50), accent = c(230, 230, 230) },
+	{ id = "tralalero", name = "Tralalero Złomalala", zone = 2, rarity = "Rare", weight = 30, shape = "Ball", color = c(60, 120, 200), accent = c(250, 250, 250) },
+	{ id = "chimpanzini", name = "Chimpanzini Magnesini", zone = 2, rarity = "Epic", weight = 40, shape = "Tall", color = c(230, 210, 60), accent = c(110, 70, 40) },
+	{ id = "sejf", name = "Sejf z Kanału", zone = 2, rarity = "Secret", weight = 45, shape = "Block", color = c(70, 75, 85), accent = c(255, 200, 40) },
+	{ id = "lalka", name = "Lalka Babci (Patrzy)", zone = 2, rarity = "Cursed", weight = 40, shape = "Tall", color = c(240, 200, 190), accent = c(255, 0, 0) },
+	{ id = "tungtung", name = "Tung Tung Rdzawy Sahur", zone = 2, rarity = "Mythic", weight = 40, shape = "Tall", color = c(150, 95, 55), accent = c(255, 230, 120) },
+
+	-- Strefa 3: Pod Mostem
+	{ id = "kaloryfer", name = "Kaloryfer Kaloryferini", zone = 3, rarity = "Common", weight = 60, shape = "Block", color = c(220, 220, 215), accent = c(150, 80, 40) },
+	{ id = "balerina", name = "Balerina Kapslina", zone = 3, rarity = "Rare", weight = 90, shape = "Tall", color = c(255, 160, 200), accent = c(120, 70, 40) },
+	{ id = "bombardiro", name = "Bombardiro Magnetilo", zone = 3, rarity = "Epic", weight = 120, shape = "Cylinder", color = c(80, 110, 60), accent = c(200, 60, 60) },
+	{ id = "lirili", name = "Lirili Rdzawila", zone = 3, rarity = "Secret", weight = 150, shape = "Ball", color = c(140, 160, 110), accent = c(255, 120, 40) },
+	{ id = "assassino", name = "Kapsla Assassino", zone = 3, rarity = "Cursed", weight = 160, shape = "Tall", color = c(60, 40, 30), accent = c(255, 30, 30) },
+	{ id = "trippi", name = "Trippi Śruppi Królewski", zone = 3, rarity = "Mythic", weight = 200, shape = "Ball", color = c(255, 140, 40), accent = c(80, 200, 255) },
+
+	-- Strefa 4: Głębia
+	{ id = "felga", name = "Felga Felgini", zone = 4, rarity = "Common", weight = 200, shape = "Flat", color = c(170, 170, 180), accent = c(60, 60, 60) },
+	{ id = "bobrito", name = "Bobrito Złomito", zone = 4, rarity = "Rare", weight = 300, shape = "Ball", color = c(120, 80, 50), accent = c(240, 240, 240) },
+	{ id = "pralka", name = "Pralka Wirówka Turbo", zone = 4, rarity = "Epic", weight = 400, shape = "Block", color = c(245, 245, 245), accent = c(40, 140, 255) },
+	{ id = "lavaca", name = "La Vaca Magnetita", zone = 4, rarity = "Secret", weight = 450, shape = "Ball", color = c(250, 250, 250), accent = c(30, 30, 30) },
+	{ id = "syrena", name = "Syrena z Kanału", zone = 4, rarity = "Cursed", weight = 500, shape = "Tall", color = c(40, 120, 110), accent = c(150, 255, 80) },
+	{ id = "neodymalala", name = "Tralalero Neodymalala", zone = 4, rarity = "Mythic", weight = 600, shape = "Ball", color = c(40, 90, 255), accent = c(255, 255, 255) },
+
+	-- Strefa 5: Przeklęty Ściek
+	{ id = "rura", name = "Rura Rurini", zone = 5, rarity = "Common", weight = 600, shape = "Cylinder", color = c(100, 100, 90), accent = c(60, 200, 60) },
+	{ id = "kaczka", name = "Gumowa Kaczka Mafii", zone = 5, rarity = "Rare", weight = 800, shape = "Ball", color = c(255, 220, 30), accent = c(20, 20, 20) },
+	{ id = "czolg", name = "Czołg z Demobilu", zone = 5, rarity = "Epic", weight = 1000, shape = "Block", color = c(70, 90, 50), accent = c(40, 40, 40) },
+	{ id = "bombombini", name = "Bombombini Gusini Ściekowy", zone = 5, rarity = "Secret", weight = 1200, shape = "Tall", color = c(200, 200, 200), accent = c(255, 140, 0) },
+	{ id = "kapitan", name = "Skrzynia Przeklętego Kapitana", zone = 5, rarity = "Cursed", weight = 1300, shape = "Block", color = c(90, 55, 30), accent = c(130, 255, 80) },
+	{ id = "magnetronio", name = "Magnetronio Imperatore", zone = 5, rarity = "Mythic", weight = 1500, shape = "Tall", color = c(30, 30, 40), accent = c(255, 215, 0) },
+}
+
+local byId: { [string]: Brainrot } = {}
+local byZoneRarity: { [string]: Brainrot } = {}
+for _, b in ipairs(list) do
+	byId[b.id] = b
+	byZoneRarity[b.zone .. ":" .. b.rarity] = b
+end
+
+local Brainrots = {}
+Brainrots.List = list
+
+function Brainrots.get(id: string): Brainrot?
+	return byId[id]
+end
+
+function Brainrots.forZone(zone: number, rarity: string): Brainrot
+	local b = byZoneRarity[zone .. ":" .. rarity]
+	assert(b, "Brak brainrota dla strefy " .. zone .. " i rzadkości " .. rarity)
+	return b
+end
+
+return Brainrots
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="22">
+        <Properties>
+          <string name="Name">Config</string>
+          <string name="Source"><![CDATA[--!strict
+-- Wszystkie wartości balansu w jednym miejscu. Zmiana tutaj nie wymaga
+-- ruszania logiki serwera ani klienta.
+
+local Config = {}
+
+----------------------------------------------------------------------
+-- Debug (tylko do testów; w Studio dodatkowo działa przycisk DEV +$)
+----------------------------------------------------------------------
+Config.Debug = {
+	StartCash = 0,
+	LuckMultiplier = 1, -- np. 50, żeby szybko zobaczyć Secret/Mythic
+	StudioCheats = true, -- przycisk DEV na HUD, działa tylko w Studio
+	SaveInStudio = true, -- wymaga "Enable Studio Access to API Services"
+}
+
+Config.DataStoreName = "MagnetStealBrainrot_v1"
+
+----------------------------------------------------------------------
+-- Rzadkości: szansa bazowa (Common dostaje resztę), mnożnik wartości,
+-- parametry minigry i to, czy drop jest ogłaszany na serwerze.
+----------------------------------------------------------------------
+export type Rarity = {
+	id: string,
+	chance: number,
+	mult: number,
+	weightMult: number,
+	color: Color3,
+	inHands: boolean,
+	announce: boolean,
+	speed: number, -- prędkość obiektu w minigrze (szerokości paska / s)
+	retarget: number, -- co ile sekund obiekt zmienia cel
+	qte: number, -- liczba skill-checków
+	drain: number, -- mnożnik spadku postępu poza polem
+	perfect: number, -- szerokość strefy Perfect w skill-checku (0..1)
+	good: number, -- szerokość strefy Good w skill-checku (0..1)
+	minTime: number, -- dolna granica czasu minigry przy maks. umiejętnościach (walidacja serwera x0.8)
+}
+
+Config.Rarities = {
+	{ id = "Common", chance = 0, mult = 1, weightMult = 1.0, color = Color3.fromRGB(190, 190, 190), inHands = false, announce = false,
+		speed = 0.30, retarget = 1.2, qte = 0, drain = 1.0, perfect = 0.11, good = 0.25, minTime = 2.0 },
+	{ id = "Rare", chance = 0.20, mult = 3, weightMult = 1.2, color = Color3.fromRGB(60, 140, 255), inHands = false, announce = false,
+		speed = 0.40, retarget = 1.0, qte = 1, drain = 1.1, perfect = 0.09, good = 0.22, minTime = 1.8 },
+	{ id = "Epic", chance = 0.06, mult = 10, weightMult = 1.5, color = Color3.fromRGB(170, 70, 255), inHands = false, announce = false,
+		speed = 0.55, retarget = 0.85, qte = 1, drain = 1.25, perfect = 0.08, good = 0.19, minTime = 1.8 },
+	{ id = "Secret", chance = 0.005, mult = 50, weightMult = 2.0, color = Color3.fromRGB(255, 50, 50), inHands = true, announce = true,
+		speed = 0.70, retarget = 0.7, qte = 2, drain = 1.4, perfect = 0.06, good = 0.17, minTime = 1.5 },
+	{ id = "Cursed", chance = 0.001, mult = 200, weightMult = 2.5, color = Color3.fromRGB(120, 255, 60), inHands = true, announce = true,
+		speed = 0.85, retarget = 0.6, qte = 2, drain = 1.6, perfect = 0.05, good = 0.14, minTime = 1.5 },
+	{ id = "Mythic", chance = 0.0001, mult = 1000, weightMult = 3.0, color = Color3.fromRGB(255, 200, 40), inHands = true, announce = true,
+		speed = 1.00, retarget = 0.5, qte = 3, drain = 1.8, perfect = 0.04, good = 0.12, minTime = 1.2 },
+} :: { Rarity }
+
+Config.RarityIndex = {} :: { [string]: number }
+for i, r in ipairs(Config.Rarities) do
+	Config.RarityIndex[r.id] = i
+end
+
+-- Mutacje (losowane niezależnie od rzadkości)
+Config.Mutations = {
+	{ id = "Rust", name = "", chance = 0.80, mult = 1 },
+	{ id = "Shiny", name = "Błyszczący", chance = 0.12, mult = 1.5 },
+	{ id = "Gold", name = "Złoty", chance = 0.05, mult = 3 },
+	{ id = "Diamond", name = "Diamentowy", chance = 0.02, mult = 5 },
+	{ id = "Radioactive", name = "Radioaktywny", chance = 0.008, mult = 10 },
+	{ id = "Rainbow", name = "Tęczowy", chance = 0.002, mult = 25 },
+}
+
+-- Rozmiary: mnożą wartość, wagę i skalę modelu
+Config.Sizes = {
+	{ id = "Mini", name = "Mini", chance = 0.20, mult = 0.8, scale = 0.75 },
+	{ id = "Normal", name = "", chance = 0.60, mult = 1.0, scale = 1.0 },
+	{ id = "Big", name = "Duży", chance = 0.15, mult = 1.5, scale = 1.3 },
+	{ id = "Huge", name = "Ogromny", chance = 0.05, mult = 2.5, scale = 1.7 },
+}
+
+----------------------------------------------------------------------
+-- Strefy kanału: wymagany zasięg magnesu, bazowy CPS Commona, bonus Luck
+----------------------------------------------------------------------
+Config.Zones = {
+	{ name = "Płycizna", reach = 8, base = 1, luck = 0.0, cursedBoost = 1, color = Color3.fromRGB(120, 200, 120) },
+	{ name = "Śluza", reach = 16, base = 5, luck = 0.10, cursedBoost = 1, color = Color3.fromRGB(80, 170, 220) },
+	{ name = "Pod Mostem", reach = 28, base = 25, luck = 0.25, cursedBoost = 1, color = Color3.fromRGB(240, 200, 60) },
+	{ name = "Głębia", reach = 45, base = 120, luck = 0.50, cursedBoost = 1, color = Color3.fromRGB(240, 120, 40) },
+	{ name = "Przeklęty Ściek", reach = 70, base = 600, luck = 1.00, cursedBoost = 3, color = Color3.fromRGB(150, 40, 200) },
+}
+
+----------------------------------------------------------------------
+-- Drzewko ulepszeń (ceny z symulacji tempa progresji)
+----------------------------------------------------------------------
+Config.Magnets = {
+	{ name = "Magnes z Lodówki", pull = 10, reach = 8, cooldown = 6.0, field = 0.22, luck = 0.00, price = 0 },
+	{ name = "Magnes Głośnikowy", pull = 25, reach = 12, cooldown = 5.5, field = 0.24, luck = 0.02, price = 300 },
+	{ name = "Neodym N35 \"Pastylka\"", pull = 60, reach = 16, cooldown = 5.0, field = 0.26, luck = 0.05, price = 10_000 },
+	{ name = "Neodym N42 \"Krążek\"", pull = 120, reach = 22, cooldown = 4.5, field = 0.28, luck = 0.08, price = 75_000 },
+	{ name = "Neodym N52 Dwustronny", pull = 250, reach = 28, cooldown = 4.0, field = 0.30, luck = 0.12, price = 500_000 },
+	{ name = "Elektromagnes Złomowy", pull = 500, reach = 35, cooldown = 4.0, field = 0.26, luck = 0.15, price = 4_000_000 },
+	{ name = "Magnes \"Czołg\"", pull = 900, reach = 45, cooldown = 3.5, field = 0.32, luck = 0.20, price = 30_000_000 },
+	{ name = "Magnes Kwantowy", pull = 1600, reach = 55, cooldown = 3.0, field = 0.34, luck = 0.30, price = 250_000_000 },
+	{ name = "Czarna Dziura", pull = 3000, reach = 70, cooldown = 2.5, field = 0.36, luck = 0.45, price = 2_000_000_000 },
+}
+
+Config.Ropes = {
+	{ name = "Sznurek od Snopowiązałki", durability = 100, reel = 1.00, pvpRange = 22, price = 0 },
+	{ name = "Linka Nylonowa", durability = 120, reel = 1.05, pvpRange = 26, price = 1_500 },
+	{ name = "Lina Wspinaczkowa", durability = 145, reel = 1.10, pvpRange = 30, price = 40_000 },
+	{ name = "Stalowa Linka", durability = 175, reel = 1.15, pvpRange = 34, price = 800_000 },
+	{ name = "Linka Kevlarowa", durability = 210, reel = 1.20, pvpRange = 38, price = 15_000_000 },
+	{ name = "Lina Grafenowa", durability = 250, reel = 1.30, pvpRange = 44, price = 300_000_000 },
+}
+
+Config.Transports = {
+	{ name = "Gołe Ręce", capacity = 1, price = 0 },
+	{ name = "Reklamówka", capacity = 2, price = 200 },
+	{ name = "Plecak Szkolny", capacity = 3, price = 5_000 },
+	{ name = "Plecak Turystyczny", capacity = 5, price = 50_000 },
+	{ name = "Wózek Sklepowy", capacity = 8, price = 600_000 },
+	{ name = "Taczka", capacity = 12, price = 6_000_000 },
+	{ name = "Skuter z Przyczepką", capacity = 16, price = 50_000_000 },
+	{ name = "Wózek Widłowy", capacity = 24, price = 400_000_000 },
+}
+
+Config.GarageLevels = {
+	{ slots = 4, price = 0 },
+	{ slots = 6, price = 800 },
+	{ slots = 8, price = 15_000 },
+	{ slots = 10, price = 120_000 },
+	{ slots = 12, price = 1_000_000 },
+	{ slots = 16, price = 8_000_000 },
+	{ slots = 20, price = 70_000_000 },
+	{ slots = 24, price = 600_000_000 },
+}
+
+Config.Items = {
+	BananaPack = { name = "Skórki od Banana x3", amount = 3, price = 500 },
+	Shield = { name = "Tarcza Magnesowa", price = 25_000, duration = 8, cooldown = 45 },
+}
+
+Config.Rebirth = {
+	baseCost = 5_000_000_000,
+	costGrowth = 5,
+	cpsBonus = 0.5, -- +50% CPS za każdy Rebirth (addytywnie)
+	luckBonus = 0.10, -- +10% Luck za każdy Rebirth
+}
+
+----------------------------------------------------------------------
+-- Ekonomia
+----------------------------------------------------------------------
+Config.Economy = {
+	SellMultiplier = 15, -- sprzedaż = 15 x CPS przedmiotu
+	PendingCapSeconds = 1800, -- Kasa w garażu mieści 30 min dochodu
+	OfflineRate = 0.5, -- 50% CPS offline
+	OfflineMaxSeconds = 7200, -- maks. 2 h offline
+	NewbieProtectionSeconds = 600,
+	NewbieProtectionEarnings = 5_000,
+}
+
+----------------------------------------------------------------------
+-- Łowienie
+----------------------------------------------------------------------
+Config.Fishing = {
+	BiteDelayMin = 1.5,
+	BiteDelayMax = 4.0,
+	HookWindow = 0.8, -- czas na klik po "KLANG!"
+	PerfectCastMin = 0.86,
+	PerfectCastMax = 0.98,
+	PerfectCastLuck = 0.10,
+	BaseGain = 0.14, -- postęp / s w polu (przy pull == weight)
+	BaseDrain = 0.09, -- spadek postępu / s poza polem
+	StartProgress = 0.25,
+	FieldAccel = 3.0,
+	FieldMaxSpeed = 1.2,
+	TensionHoldInside = 0.30,
+	TensionHoldOutside = 0.45,
+	TensionRelease = 0.30,
+	TensionStart = 0.30,
+	SweetSpotMin = 0.40,
+	SweetSpotMax = 0.70,
+	SweetSpotBonus = 1.25,
+	HookableRatio = 0.5, -- da się zaczepić, gdy pull >= 0.5 * waga
+	Timeout = 90,
+	NewPlayerEpicPity = 25, -- gwarantowany Epic w pierwszych N rzutach
+	SecretPity = 500, -- twarde pity: Secret najpóźniej co N rzutów
+}
+
+----------------------------------------------------------------------
+-- PvP: kradzież i przeciąganie liny
+----------------------------------------------------------------------
+Config.Steal = {
+	AimTolerance = 10, -- studs od punktu celowania
+	MissCooldown = 1.5,
+	FailCooldown = 6,
+	DefenderGrace = 3,
+	BeatInterval = 0.6,
+	MaxBeats = 12,
+	WinThreshold = 40,
+	ShiftPerBeat = 12,
+	DefenderBonus = 1.15,
+	RevengeBonus = 1.25,
+	RevengeSeconds = 90,
+	MinForceRatio = 0.5,
+	PerfectWindow = 0.08,
+	GoodWindow = 0.18,
+	PerfectMult = 1.5,
+	GoodMult = 1.0,
+	MissMult = 0.25,
+	TugSpeedMult = 0.35,
+	RopeSnapRangeMult = 1.6,
+}
+
+Config.Hazards = {
+	MaxBananas = 3,
+	BananaLifetime = 60,
+	SlipSeconds = 1.5,
+	GroundLootLifetime = 60,
+	SinkChance = 0.5,
+	SunkLootLifetime = 90,
+	SunkLootRadius = 25,
+}
+
+Config.Movement = {
+	BaseSpeed = 18,
+	PerItemPenalty = 0.03,
+	MinSpeedFactor = 0.6,
+	HandItemFactor = 0.8,
+}
+
+Config.Events = {
+	StormFirstDelay = 300,
+	StormEvery = 600,
+	StormDuration = 90,
+	StormLuck = 2,
+}
+
+----------------------------------------------------------------------
+-- Układ mapy (studs). Mapa jest budowana kodem przy starcie serwera.
+----------------------------------------------------------------------
+Config.Layout = {
+	PlotCount = 8,
+	PlotStartX = -210,
+	PlotSpacing = 60,
+	PlotCenterZ = -112,
+	PlotSizeX = 50,
+	PlotSizeZ = 44,
+	DrivewayDepth = 6,
+	CanalMinX = -260,
+	CanalMaxX = 260,
+	CanalStartZ = 0,
+	ZoneLength = 47,
+	PierXs = { -140, 0, 140 },
+	PierWidth = 10,
+	WaterY = -0.5,
+	FloorY = -14,
+	MapHalfWidth = 280,
+	StreetMinZ = -150,
+}
+
+-- Dźwięki: wbudowane pliki Robloxa; podmień na własne asset ID
+Config.Sounds = {
+	Cast = "rbxasset://sounds/swoosh.wav",
+	Clank = "rbxasset://sounds/clickfast.wav",
+	Catch = "rbxasset://sounds/electronicpingshort.wav",
+	Snap = "rbxasset://sounds/snap.wav",
+	Alert = "rbxasset://sounds/victory.wav",
+	Steal = "rbxasset://sounds/swoosh.wav",
+	Splash = "rbxasset://sounds/impact_water.mp3",
+	Slip = "rbxasset://sounds/splat.wav",
+	Buy = "rbxasset://sounds/button.wav",
+}
+
+return Config
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="23">
+        <Properties>
+          <string name="Name">Format</string>
+          <string name="Source"><![CDATA[--!strict
+local Format = {}
+
+local SUFFIXES = { "", "K", "M", "B", "T", "Qa", "Qi" }
+
+-- 1234 -> "1.23K", 5000000 -> "5M"
+function Format.short(n: number): string
+	if n ~= n then
+		return "0"
+	end
+	local negative = n < 0
+	n = math.abs(n)
+	local i = 1
+	while n >= 1000 and i < #SUFFIXES do
+		n /= 1000
+		i += 1
+	end
+	local text
+	if i == 1 then
+		text = tostring(math.floor(n))
+	elseif n >= 100 then
+		text = string.format("%d", math.floor(n))
+	elseif n >= 10 then
+		text = string.format("%.1f", math.floor(n * 10) / 10)
+	else
+		text = string.format("%.2f", math.floor(n * 100) / 100)
+	end
+	if string.find(text, ".", 1, true) then
+		text = string.gsub(text, "0+$", "")
+		text = string.gsub(text, "%.$", "")
+	end
+	return (negative and "-" or "") .. text .. SUFFIXES[i]
+end
+
+function Format.money(n: number): string
+	return "$" .. Format.short(n)
+end
+
+function Format.time(seconds: number): string
+	seconds = math.max(0, math.floor(seconds))
+	local m = seconds // 60
+	local s = seconds % 60
+	return string.format("%d:%02d", m, s)
+end
+
+return Format
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="24">
+        <Properties>
+          <string name="Name">Geo</string>
+          <string name="Source"><![CDATA[--!strict
+-- Geometria mapy: gdzie są garaże, pomosty i strefy kanału.
+-- Używana przez serwer (walidacja) i klienta (HUD).
+
+local Config = require(script.Parent.Config)
+
+local L = Config.Layout
+local Geo = {}
+
+function Geo.plotCenter(index: number): Vector3
+	return Vector3.new(L.PlotStartX + (index - 1) * L.PlotSpacing, 0, L.PlotCenterZ)
+end
+
+function Geo.plotFrontZ(): number
+	return L.PlotCenterZ + L.PlotSizeZ / 2
+end
+
+-- Indeks działki, na której stoi pozycja (z podjazdem), albo nil
+function Geo.plotAt(pos: Vector3): number?
+	local halfX = L.PlotSizeX / 2
+	local minZ = L.PlotCenterZ - L.PlotSizeZ / 2 - 2
+	local maxZ = Geo.plotFrontZ() + L.DrivewayDepth
+	if pos.Z < minZ or pos.Z > maxZ then
+		return nil
+	end
+	for i = 1, L.PlotCount do
+		local c = Geo.plotCenter(i)
+		if math.abs(pos.X - c.X) <= halfX then
+			return i
+		end
+	end
+	return nil
+end
+
+function Geo.isSafe(pos: Vector3): boolean
+	return Geo.plotAt(pos) ~= nil
+end
+
+function Geo.zoneAtZ(z: number): number
+	local idx = math.floor(math.max(z - L.CanalStartZ, 0) / L.ZoneLength) + 1
+	return math.clamp(idx, 1, #Config.Zones)
+end
+
+function Geo.pierAt(pos: Vector3): number?
+	for _, x in ipairs(L.PierXs) do
+		if math.abs(pos.X - x) <= L.PierWidth / 2 + 1 then
+			if pos.Z >= L.CanalStartZ - 3 and pos.Z <= L.CanalStartZ + L.ZoneLength * #Config.Zones + 2 then
+				return x
+			end
+		end
+	end
+	return nil
+end
+
+-- Strefa łowienia dla pozycji HumanoidRootPart albo nil (za daleko od wody)
+function Geo.fishingZone(pos: Vector3): number?
+	if pos.Y < 0 then
+		return nil -- w wodzie nie łowimy
+	end
+	if Geo.pierAt(pos) then
+		return Geo.zoneAtZ(pos.Z)
+	end
+	local atBank = pos.Z >= L.CanalStartZ - 7 and pos.Z <= L.CanalStartZ + 1
+	if atBank and pos.X > L.CanalMinX and pos.X < L.CanalMaxX then
+		return 1
+	end
+	return nil
+end
+
+-- Punkt na wodzie, w który wpada magnes
+function Geo.castPoint(pos: Vector3, look: Vector3): Vector3
+	local pierX = Geo.pierAt(pos)
+	if pierX then
+		local side = look.X
+		if math.abs(side) < 0.2 then
+			side = pos.X - pierX
+		end
+		local dir = if side >= 0 then 1 else -1
+		return Vector3.new(pierX + dir * (L.PierWidth / 2 + 4), L.WaterY, pos.Z + look.Z * 3)
+	end
+	return Vector3.new(pos.X + look.X * 3, L.WaterY, L.CanalStartZ + 5)
+end
+
+function Geo.inWater(pos: Vector3): boolean
+	if pos.Y >= 0 then
+		return false
+	end
+	return pos.X > L.CanalMinX
+		and pos.X < L.CanalMaxX
+		and pos.Z > L.CanalStartZ
+		and pos.Z < L.CanalStartZ + L.ZoneLength * #Config.Zones + 6
+end
+
+function Geo.zoneLabel(pos: Vector3): (string, boolean)
+	local plot = Geo.plotAt(pos)
+	if plot then
+		return "Garaż (Safe Zone)", true
+	end
+	local z = Geo.fishingZone(pos)
+	if z then
+		return "Strefa " .. z .. ": " .. Config.Zones[z].name .. " (Lawless)", false
+	end
+	if Geo.inWater(pos) then
+		return "W kanale! (Lawless)", false
+	end
+	return "Ulica (Lawless Zone)", false
+end
+
+return Geo
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="25">
+        <Properties>
+          <string name="Name">Loot</string>
+          <string name="Source"><![CDATA[--!strict
+-- Czysta logika losowania i wyceny (bez API Robloxa poza Random),
+-- dzięki czemu da się ją testować poza Studio.
+
+local Config = require(script.Parent.Config)
+local Brainrots = require(script.Parent.Brainrots)
+
+export type Item = {
+	uid: string,
+	id: string,
+	mut: string,
+	size: string,
+}
+
+local Loot = {}
+
+local mutById: { [string]: any } = {}
+for _, m in ipairs(Config.Mutations) do
+	mutById[m.id] = m
+end
+local sizeById: { [string]: any } = {}
+for _, s in ipairs(Config.Sizes) do
+	sizeById[s.id] = s
+end
+
+local MYTHIC_CAP = 1 / 500
+
+-- Zwraca indeks rzadkości (1 = Common ... 6 = Mythic).
+function Loot.rollRarity(rng: Random, luck: number, zone: number, forceMin: number?): number
+	local zoneCfg = Config.Zones[zone]
+	local chances = table.create(#Config.Rarities, 0)
+	local total = 0
+	for i = 2, #Config.Rarities do
+		local r = Config.Rarities[i]
+		local p = r.chance * luck
+		if r.id == "Cursed" then
+			p *= zoneCfg.cursedBoost
+		elseif r.id == "Mythic" then
+			p = math.min(p, MYTHIC_CAP)
+		end
+		chances[i] = p
+		total += p
+	end
+	-- Przy ogromnym Luck nie pozwalamy, by Common zniknął całkiem
+	if total > 0.95 then
+		local scale = 0.95 / total
+		for i = 2, #chances do
+			chances[i] *= scale
+		end
+	end
+	local roll = rng:NextNumber()
+	local acc = 0
+	local result = 1
+	for i = #Config.Rarities, 2, -1 do
+		acc += chances[i]
+		if roll < acc then
+			result = i
+			break
+		end
+	end
+	if forceMin and result < forceMin then
+		result = forceMin
+	end
+	return result
+end
+
+local function pickWeighted(rng: Random, entries: { any }): any
+	local roll = rng:NextNumber()
+	local acc = 0
+	for _, e in ipairs(entries) do
+		acc += e.chance
+		if roll < acc then
+			return e
+		end
+	end
+	return entries[1]
+end
+
+function Loot.rollMutation(rng: Random): string
+	return pickWeighted(rng, Config.Mutations).id
+end
+
+function Loot.rollSize(rng: Random): string
+	return pickWeighted(rng, Config.Sizes).id
+end
+
+function Loot.mutation(id: string): any
+	return mutById[id] or Config.Mutations[1]
+end
+
+function Loot.size(id: string): any
+	return sizeById[id] or Config.Sizes[2]
+end
+
+function Loot.rarityOf(item: Item): Config.Rarity
+	local b = Brainrots.get(item.id)
+	local idx = b and Config.RarityIndex[b.rarity] or 1
+	return Config.Rarities[idx]
+end
+
+-- Dochód na sekundę bez mnożnika Rebirth
+function Loot.cps(item: Item): number
+	local b = Brainrots.get(item.id)
+	if not b then
+		return 0
+	end
+	local rarity = Config.Rarities[Config.RarityIndex[b.rarity]]
+	local zone = Config.Zones[b.zone]
+	return zone.base * rarity.mult * Loot.mutation(item.mut).mult * Loot.size(item.size).mult
+end
+
+function Loot.weight(item: Item): number
+	local b = Brainrots.get(item.id)
+	if not b then
+		return 1
+	end
+	local rarity = Config.Rarities[Config.RarityIndex[b.rarity]]
+	return b.weight * rarity.weightMult * Loot.size(item.size).mult
+end
+
+function Loot.displayName(item: Item): string
+	local b = Brainrots.get(item.id)
+	local name = b and b.name or item.id
+	local prefix = {}
+	local s = Loot.size(item.size)
+	if s.name ~= "" then
+		table.insert(prefix, s.name)
+	end
+	local m = Loot.mutation(item.mut)
+	if m.name ~= "" then
+		table.insert(prefix, m.name)
+	end
+	if #prefix > 0 then
+		return table.concat(prefix, " ") .. " " .. name
+	end
+	return name
+end
+
+function Loot.sellValue(item: Item, rebirths: number): number
+	return math.floor(Loot.cps(item) * Config.Economy.SellMultiplier * Loot.rebirthMult(rebirths))
+end
+
+function Loot.rebirthMult(rebirths: number): number
+	return 1 + Config.Rebirth.cpsBonus * rebirths
+end
+
+return Loot
+]]></string>
+        </Properties>
+      </Item>
+    </Item>
+  </Item>
+  <Item class="ServerScriptService" referent="26">
+    <Properties>
+      <string name="Name">ServerScriptService</string>
+    </Properties>
+    <Item class="Script" referent="27">
+      <Properties>
+        <string name="Name">GameServer</string>
+        <token name="RunContext">0</token>
+        <string name="Source"><![CDATA[-- Magnet & Steal a Brainrot - punkt startowy serwera.
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Format = require(Shared.Format)
+
+local MapBuilder = require(script.MapBuilder)
+MapBuilder.build()
+
+local Net = require(script.Net)
+local Session = require(script.Session)
+local Inventory = require(script.Inventory)
+local Garage = require(script.Garage)
+local Hazards = require(script.Hazards)
+local Fishing = require(script.Fishing)
+local Steal = require(script.Steal)
+local Shop = require(script.Shop)
+local Events = require(script.Events)
+
+Garage.init()
+Events.start()
+
+----------------------------------------------------------------------
+-- Gracze
+----------------------------------------------------------------------
+local function onCharacter(player: Player, character: Model)
+	local s = Session.get(player)
+	if not s then
+		return
+	end
+	local humanoid = character:WaitForChild("Humanoid") :: Humanoid
+	local root = character:WaitForChild("HumanoidRootPart") :: BasePart
+	task.wait()
+	if s.plot then
+		character:PivotTo(Garage.spawnCFrame(s.plot))
+	end
+	s.inWater = false
+	Inventory.refreshTools(s)
+	Inventory.changed(s)
+
+	humanoid.Died:Connect(function()
+		Steal.forceEnd(player)
+		Fishing.cancel(s)
+		-- Śmierć w Lawless Zone = łup zostaje na ziemi dla innych
+		for _, item in ipairs(Inventory.takeAll(s)) do
+			Hazards.scatter(item, root.Position)
+		end
+	end)
+end
+
+local function onPlayerAdded(player: Player)
+	local leaderstats = Instance.new("Folder")
+	leaderstats.Name = "leaderstats"
+	local cash = Instance.new("StringValue")
+	cash.Name = "Kasa"
+	cash.Parent = leaderstats
+	local cps = Instance.new("StringValue")
+	cps.Name = "CPS"
+	cps.Parent = leaderstats
+	leaderstats.Parent = player
+
+	local s = Session.create(player)
+	if not player.Parent then
+		Session.remove(player)
+		return
+	end
+	if not Garage.assign(s) then
+		player:Kick("Brak wolnych garaży na tym serwerze")
+		return
+	end
+	Session.sync(s)
+	Net.event("IndexUpdate"):FireClient(player, s.data.index)
+	if s.offlineEarned >= 1 then
+		Net.notify(player, "Dochód offline czeka w Kasie: " .. Format.money(s.offlineEarned), "good")
+	end
+	if not s.saveEnabled then
+		Net.notify(player, "Uwaga: zapis postępu wyłączony (brak dostępu do DataStore)", "bad")
+	end
+
+	player.CharacterAdded:Connect(function(character)
+		onCharacter(player, character)
+	end)
+	if player.Character then
+		task.spawn(onCharacter, player, player.Character)
+	end
+end
+
+local function onPlayerRemoving(player: Player)
+	local s = Session.get(player)
+	if s then
+		Steal.forceEnd(player)
+		Fishing.cancel(s)
+		-- Wyjście z łupem w rękach = łup zostaje na mapie (anty rage-quit)
+		local root = Inventory.rootOf(player)
+		for _, item in ipairs(s.carried) do
+			if root then
+				Hazards.scatter(item, root.Position)
+			end
+		end
+		s.carried = {}
+		Garage.release(s)
+	end
+	Session.remove(player)
+end
+
+Players.PlayerAdded:Connect(onPlayerAdded)
+Players.PlayerRemoving:Connect(onPlayerRemoving)
+for _, player in ipairs(Players:GetPlayers()) do
+	task.spawn(onPlayerAdded, player)
+end
+
+game:BindToClose(function()
+	for player in pairs(Session.all()) do
+		Session.save(player)
+	end
+end)
+
+----------------------------------------------------------------------
+-- Zdarzenia sieciowe
+----------------------------------------------------------------------
+Net.event("CastRequest").OnServerEvent:Connect(Fishing.onCast)
+Net.event("FishResult").OnServerEvent:Connect(Fishing.onResult)
+Net.event("StealRequest").OnServerEvent:Connect(Steal.onRequest)
+Net.event("TugTap").OnServerEvent:Connect(Steal.onTap)
+Net.event("PlaceBanana").OnServerEvent:Connect(Hazards.placeBanana)
+Net.event("UseShield").OnServerEvent:Connect(Hazards.useShield)
+
+Net.func("Purchase").OnServerInvoke = function(player, category)
+	local ok, msg = Shop.purchase(player, category)
+	return ok, msg
+end
+
+Net.event("DevCheat").OnServerEvent:Connect(function(player)
+	if not (RunService:IsStudio() and Config.Debug.StudioCheats) then
+		return
+	end
+	local s = Session.get(player)
+	if s then
+		Session.addCash(s, math.max(1_000_000, s.data.cash * 9))
+		Session.sync(s)
+	end
+end)
+
+----------------------------------------------------------------------
+-- Pętle świata
+----------------------------------------------------------------------
+local fastAcc, slowAcc, saveAcc = 0, 0, 0
+RunService.Heartbeat:Connect(function(dt)
+	fastAcc += dt
+	slowAcc += dt
+	saveAcc += dt
+
+	if fastAcc >= 0.2 then
+		fastAcc = 0
+		for player, s in pairs(Session.all()) do
+			if s.loaded then
+				local root = Inventory.rootOf(player)
+				if root then
+					Garage.positionTick(s, root.Position)
+					Hazards.waterTick(s, root.Position)
+				end
+			end
+		end
+	end
+
+	if slowAcc >= 1 then
+		local step = slowAcc
+		slowAcc = 0
+		for _, s in pairs(Session.all()) do
+			if s.loaded then
+				Garage.incomeTick(s, step)
+				Session.sync(s)
+			end
+		end
+		Hazards.cleanup()
+	end
+
+	if saveAcc >= 120 then
+		saveAcc = 0
+		for player in pairs(Session.all()) do
+			task.spawn(Session.save, player)
+		end
+	end
+end)
+
+print("[MSB] Serwer gotowy")
+]]></string>
+      </Properties>
+      <Item class="ModuleScript" referent="28">
+        <Properties>
+          <string name="Name">Events</string>
+          <string name="Source"><![CDATA[-- Eventy serwerowe. Na razie: Burza Magnetyczna (Luck x2) co 10 minut.
+local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+
+local Net = require(script.Parent.Net)
+
+local Events = {}
+
+local stormActive = false
+
+function Events.luckMultiplier(): number
+	return if stormActive then Config.Events.StormLuck else 1
+end
+
+local function setStorm(on: boolean)
+	stormActive = on
+	workspace:SetAttribute("Storm", on)
+	local goal = if on
+		then { OutdoorAmbient = Color3.fromRGB(90, 70, 160), ClockTime = 19.5 }
+		else { OutdoorAmbient = Color3.fromRGB(140, 140, 150), ClockTime = 14.5 }
+	TweenService:Create(Lighting, TweenInfo.new(3), goal):Play()
+	Net.alert({
+		kind = "event",
+		title = if on then "BURZA MAGNETYCZNA!" else "Burza minęła",
+		text = if on
+			then "Luck x" .. Config.Events.StormLuck .. " przez " .. Config.Events.StormDuration .. " s"
+			else "Do następnej burzy " .. math.floor(Config.Events.StormEvery / 60) .. " min",
+		on = on,
+	})
+end
+
+function Events.start()
+	task.spawn(function()
+		task.wait(Config.Events.StormFirstDelay)
+		while true do
+			setStorm(true)
+			task.wait(Config.Events.StormDuration)
+			setStorm(false)
+			task.wait(math.max(0, Config.Events.StormEvery - Config.Events.StormDuration))
+		end
+	end)
+end
+
+return Events
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="29">
+        <Properties>
+          <string name="Name">Fishing</string>
+          <string name="Source"><![CDATA[-- Łowienie magnesem. Serwer losuje łup w chwili rzutu (klient nie zna
+-- wyniku, tylko kolor tieru do minigry), pilnuje cooldownów, zasięgu
+-- magnesu, miejsca w plecaku i minimalnego czasu minigry.
+local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Brainrots = require(Shared.Brainrots)
+local Loot = require(Shared.Loot)
+local Geo = require(Shared.Geo)
+local Format = require(Shared.Format)
+
+local Session = require(script.Parent.Session)
+local Models = require(script.Parent.Models)
+local Inventory = require(script.Parent.Inventory)
+local Hazards = require(script.Parent.Hazards)
+local Events = require(script.Parent.Events)
+local Net = require(script.Parent.Net)
+
+local Fishing = {}
+
+local rng = Random.new()
+local F = Config.Fishing
+
+type Rig = { magnet: BasePart, beam: Beam, pillar: BasePart? }
+type FishState = {
+	token: string,
+	item: Loot.Item,
+	rarity: number,
+	startedAt: number,
+	biteDelay: number,
+	hookable: boolean,
+	castPoint: Vector3,
+	rig: Rig?,
+}
+
+local function buildRig(player: Player, castPoint: Vector3): Rig?
+	local tool = Inventory.equippedTool(player, Inventory.ToolNames.Fish)
+	local handle = tool and tool:FindFirstChild("Handle")
+	local tip = handle and handle:FindFirstChild("Tip") :: Attachment?
+	if not tip then
+		return nil
+	end
+	local magnet = Models.magnetHead()
+	magnet.CFrame = CFrame.new(castPoint)
+	magnet.Parent = workspace
+	local beam = Models.line(tip, magnet:FindFirstChild("LineAttachment") :: Attachment, Color3.fromRGB(230, 230, 230))
+	-- Magnes opada pod wodę
+	TweenService:Create(magnet, TweenInfo.new(1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+		CFrame = CFrame.new(castPoint - Vector3.new(0, 5, 0)),
+	}):Play()
+	return { magnet = magnet, beam = beam, pillar = nil }
+end
+
+local function destroyRig(rig: Rig?, pullUp: boolean)
+	if not rig then
+		return
+	end
+	if pullUp then
+		local tween = TweenService:Create(rig.magnet, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+			CFrame = rig.magnet.CFrame + Vector3.new(0, 7, 0),
+		})
+		tween:Play()
+		tween.Completed:Wait()
+	end
+	rig.beam:Destroy()
+	rig.magnet:Destroy()
+	if rig.pillar then
+		rig.pillar:Destroy()
+	end
+end
+
+local function luckFor(s: Session.State, zone: number, perfectCast: boolean): number
+	local magnet = Config.Magnets[s.data.magnet]
+	local luck = 1
+		+ magnet.luck
+		+ Config.Zones[zone].luck
+		+ Config.Rebirth.luckBonus * s.data.rebirths
+		+ (if perfectCast then F.PerfectCastLuck else 0)
+	return luck * Events.luckMultiplier() * Config.Debug.LuckMultiplier
+end
+
+local function rollItem(s: Session.State, zone: number, perfectCast: boolean): (Loot.Item, number)
+	local d = s.data
+	local rarityIdx: number
+	if d.casts == 0 then
+		rarityIdx = 1 -- onboarding: pierwszy łup zawsze Common
+	elseif d.casts == 1 then
+		rarityIdx = 2 -- drugi zawsze Rare (uczy skill-checku)
+	else
+		local forceMin = nil
+		if d.castsSinceSecret + 1 >= F.SecretPity then
+			forceMin = Config.RarityIndex.Secret
+		elseif not d.hadEpic and d.casts + 1 >= F.NewPlayerEpicPity then
+			forceMin = Config.RarityIndex.Epic
+		end
+		rarityIdx = Loot.rollRarity(rng, luckFor(s, zone, perfectCast), zone, forceMin)
+	end
+	local rarity = Config.Rarities[rarityIdx]
+	local b = Brainrots.forZone(zone, rarity.id)
+	local item: Loot.Item = {
+		uid = HttpService:GenerateGUID(false),
+		id = b.id,
+		mut = if d.casts < 2 then "Rust" else Loot.rollMutation(rng),
+		size = if d.casts < 2 then "Normal" else Loot.rollSize(rng),
+	}
+	d.casts += 1
+	if rarityIdx >= Config.RarityIndex.Epic then
+		d.hadEpic = true
+	end
+	if rarityIdx >= Config.RarityIndex.Secret then
+		d.castsSinceSecret = 0
+	else
+		d.castsSinceSecret += 1
+	end
+	return item, rarityIdx
+end
+
+local function finish(s: Session.State, success: boolean, reason: string?)
+	local f = s.fishing :: FishState?
+	if not f then
+		return
+	end
+	s.fishing = nil
+	Session.setCooldown(s, "cast", Config.Magnets[s.data.magnet].cooldown)
+	local player = s.player
+	local item = f.item
+
+	if success then
+		local rarity = Config.Rarities[f.rarity]
+		local isNew = not s.data.index[item.id]
+		s.data.index[item.id] = true
+		if not Inventory.add(s, item) then
+			local root = Inventory.rootOf(player)
+			if root then
+				Hazards.scatter(item, root.Position)
+			end
+		end
+		Net.notify(
+			player,
+			"Wyłowiono: " .. Loot.displayName(item) .. " (" .. Format.money(Loot.cps(item) * Loot.rebirthMult(s.data.rebirths)) .. "/s)",
+			"good"
+		)
+		if isNew then
+			Net.event("IndexUpdate"):FireClient(player, s.data.index)
+		end
+		if rarity.announce then
+			Net.alert({
+				kind = "catch",
+				rarity = f.rarity,
+				player = player.DisplayName,
+				itemName = Loot.displayName(item),
+				zone = Geo.zoneAtZ(f.castPoint.Z),
+			})
+		end
+	else
+		if f.hookable and reason == "cancel" then
+			-- Przerwane łowienie: obiekt wraca na dno, każdy może go wyłowić
+			Hazards.sink(item, f.castPoint, player.DisplayName)
+		elseif f.hookable then
+			Net.notify(player, if reason == "snap" then "Lina pękła! Obiekt wrócił na dno." else "Uciekło...", "bad")
+		end
+	end
+
+	Inventory.updateSpeed(s)
+	Session.sync(s)
+	task.spawn(destroyRig, f.rig, success)
+end
+
+function Fishing.cancel(s: Session.State)
+	if s.fishing then
+		Net.event("FishStart"):FireClient(s.player, { cancel = true })
+		finish(s, false, "cancel")
+	end
+end
+
+function Fishing.onCast(player: Player, power: any)
+	local s = Session.get(player)
+	local root = Inventory.rootOf(player)
+	if not s or not root then
+		return
+	end
+	if s.fishing or s.tug then
+		return
+	end
+	if not Inventory.isEquipped(player, Inventory.ToolNames.Fish) then
+		return
+	end
+	if not Session.cooldownReady(s, "cast") then
+		return
+	end
+	local zone = Geo.fishingZone(root.Position)
+	if not zone then
+		Net.notify(player, "Podejdź do brzegu kanału albo wejdź na pomost", "bad")
+		return
+	end
+	local magnet = Config.Magnets[s.data.magnet]
+	local zoneCfg = Config.Zones[zone]
+	if magnet.reach < zoneCfg.reach then
+		Net.notify(player, magnet.name .. " sięga " .. magnet.reach .. " m, a " .. zoneCfg.name .. " wymaga " .. zoneCfg.reach .. " m. Ulepsz magnes!", "bad")
+		return
+	end
+	if Inventory.isFull(s) then
+		Net.notify(player, "Pełny transport! Zanieś łup do garażu albo kup większy plecak.", "bad")
+		return
+	end
+
+	local p = if type(power) == "number" then math.clamp(power, 0, 1) else 0.5
+	local perfectCast = p >= F.PerfectCastMin and p <= F.PerfectCastMax
+
+	local castPoint = Geo.castPoint(root.Position, root.CFrame.LookVector)
+	local item = Hazards.takeSunkNear(castPoint)
+	local rarityIdx: number
+	local hookable = true
+	if item then
+		rarityIdx = Config.RarityIndex[Loot.rarityOf(item).id]
+	else
+		item, rarityIdx = rollItem(s, zone, perfectCast)
+		hookable = magnet.pull >= Loot.weight(item) * F.HookableRatio
+	end
+	local rarity = Config.Rarities[rarityIdx]
+
+	local fish: FishState = {
+		token = HttpService:GenerateGUID(false),
+		item = item,
+		rarity = rarityIdx,
+		startedAt = os.clock(),
+		biteDelay = rng:NextNumber(F.BiteDelayMin, F.BiteDelayMax),
+		hookable = hookable,
+		castPoint = castPoint,
+		rig = nil,
+	}
+	s.fishing = fish
+	fish.rig = buildRig(player, castPoint)
+	Inventory.updateSpeed(s)
+	Session.sync(s)
+
+	local rope = Config.Ropes[s.data.rope]
+	Net.event("FishStart"):FireClient(player, {
+		token = fish.token,
+		rarity = rarityIdx,
+		biteDelay = fish.biteDelay,
+		hookWindow = F.HookWindow,
+		tooHeavy = not hookable,
+		weight = math.floor(Loot.weight(item)),
+		pull = magnet.pull,
+		needPull = math.ceil(Loot.weight(item) * F.HookableRatio),
+		field = magnet.field,
+		durability = rope.durability,
+		reel = rope.reel,
+		perfectCast = perfectCast,
+		teaseName = if hookable then nil else (Brainrots.get(item.id) :: Brainrots.Brainrot).name,
+	})
+
+	-- Secret+ na haczyku: słup światła z wody widoczny dla wszystkich
+	task.delay(fish.biteDelay, function()
+		if s.fishing ~= fish or not hookable or not rarity.inHands then
+			return
+		end
+		local pillar = Models.lightPillar(rarity.color)
+		pillar.Anchored = true
+		pillar.CFrame = CFrame.new(castPoint + Vector3.new(0, 150, 0)) * CFrame.Angles(0, 0, math.rad(90))
+		pillar.Parent = workspace
+		if fish.rig then
+			fish.rig.pillar = pillar
+		else
+			task.delay(30, function()
+				pillar:Destroy()
+			end)
+		end
+		Net.alert({ kind = "hooked", rarity = rarityIdx, player = player.DisplayName, zone = zone })
+	end)
+
+	if not hookable then
+		-- Za ciężkie: tylko pokaz sylwetki, bez minigry
+		task.delay(fish.biteDelay + 2.5, function()
+			if s.fishing == fish then
+				finish(s, false, "tooHeavy")
+			end
+		end)
+	end
+
+	task.delay(F.Timeout, function()
+		if s.fishing == fish then
+			finish(s, false, "timeout")
+		end
+	end)
+end
+
+function Fishing.onResult(player: Player, token: any, success: any, reason: any)
+	local s = Session.get(player)
+	if not s then
+		return
+	end
+	local f = s.fishing :: FishState?
+	if not f or f.token ~= token or not f.hookable then
+		return
+	end
+	local ok = success == true
+	if ok then
+		-- Walidacja: minigra nie może być krótsza niż minimum dla tieru
+		local elapsed = os.clock() - f.startedAt
+		local minimum = f.biteDelay + Config.Rarities[f.rarity].minTime * 0.8
+		if elapsed < minimum then
+			warn(("[MSB] Podejrzanie szybka minigra: %s %.2fs < %.2fs"):format(player.Name, elapsed, minimum))
+			ok = false
+		end
+	end
+	finish(s, ok, if type(reason) == "string" then reason else nil)
+end
+
+return Fishing
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="30">
+        <Properties>
+          <string name="Name">Garage</string>
+          <string name="Source"><![CDATA[-- Garaże: przydział działek, stojaki z Brainrotami, dochód (CPS),
+-- Kasa do odbioru, auto-odkładanie łupu po wejściu do Safe Zone.
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Loot = require(Shared.Loot)
+local Geo = require(Shared.Geo)
+local Format = require(Shared.Format)
+
+local Session = require(script.Parent.Session)
+local Models = require(script.Parent.Models)
+local Inventory = require(script.Parent.Inventory)
+local MapBuilder = require(script.Parent.MapBuilder)
+local Net = require(script.Parent.Net)
+
+local MAX_SLOTS = 24
+local Garage = {}
+
+local owners: { [number]: Player } = {}
+
+local function plotFolder(index: number): Folder
+	return MapBuilder.plotFolder(index)
+end
+
+local function setGateText(index: number, text: string)
+	local beam = plotFolder(index):FindFirstChild("GateBeam")
+	if not beam then
+		return
+	end
+	for _, gui in ipairs(beam:GetChildren()) do
+		if gui:IsA("SurfaceGui") then
+			local label = gui:FindFirstChildOfClass("TextLabel")
+			if label then
+				label.Text = text
+			end
+		end
+	end
+end
+
+function Garage.ownerOf(index: number): Player?
+	return owners[index]
+end
+
+function Garage.spawnCFrame(index: number): CFrame
+	local c = Geo.plotCenter(index)
+	return CFrame.new(c.X - 8, 4, c.Z + Config.Layout.PlotSizeZ / 2 - 4) * CFrame.Angles(0, math.rad(180), 0)
+end
+
+-- Odświeża wszystkie 24 stojaki działki gracza
+function Garage.refresh(s: Session.State)
+	local index = s.plot
+	if not index then
+		return
+	end
+	local folder = plotFolder(index)
+	local items = folder:FindFirstChild("Items") :: Folder
+	items:ClearAllChildren()
+	local unlocked = Config.GarageLevels[s.data.garage].slots
+	local pedestals = folder:FindFirstChild("Pedestals") :: Folder
+	for slot = 1, MAX_SLOTS do
+		local ped = pedestals:FindFirstChild("Pedestal_" .. slot) :: BasePart
+		local prompt = ped:FindFirstChild("SellPrompt") :: ProximityPrompt
+		local item = s.data.racks[tostring(slot)]
+		if slot > unlocked then
+			ped.Transparency = 0.8
+			ped.Color = Color3.fromRGB(60, 60, 60)
+			prompt.Enabled = false
+		else
+			ped.Transparency = 0
+			ped.Color = if item then Loot.rarityOf(item).color else Color3.fromRGB(70, 70, 80)
+			prompt.Enabled = item ~= nil
+		end
+		if item and slot <= unlocked then
+			local model = Models.brainrot(item)
+			model:PivotTo(CFrame.new(ped.Position + Vector3.new(0, 2.6 * Loot.size(item.size).scale, 0)) * CFrame.Angles(0, math.rad(180), 0))
+			for _, d in ipairs(model:GetDescendants()) do
+				if d:IsA("BasePart") then
+					d.Anchored = true
+				end
+			end
+			Models.label(model, item, Models.cpsText(item, s.data.rebirths), 45)
+			model.Parent = items
+			prompt.ObjectText = Loot.displayName(item)
+			prompt.ActionText = "Sprzedaj " .. Format.money(Loot.sellValue(item, s.data.rebirths))
+		end
+	end
+end
+
+function Garage.assign(s: Session.State): number?
+	for i = 1, Config.Layout.PlotCount do
+		if owners[i] == nil then
+			owners[i] = s.player
+			s.plot = i
+			setGateText(i, "GARAŻ: " .. string.upper(s.player.DisplayName))
+			Garage.refresh(s)
+			return i
+		end
+	end
+	return nil
+end
+
+function Garage.release(s: Session.State)
+	local index = s.plot
+	if not index then
+		return
+	end
+	owners[index] = nil
+	setGateText(index, "WOLNY GARAŻ")
+	local folder = plotFolder(index)
+	;(folder:FindFirstChild("Items") :: Folder):ClearAllChildren()
+	local pedestals = folder:FindFirstChild("Pedestals") :: Folder
+	for _, ped in ipairs(pedestals:GetChildren()) do
+		local prompt = ped:FindFirstChild("SellPrompt") :: ProximityPrompt?
+		if prompt then
+			prompt.Enabled = false
+		end
+		if ped:IsA("BasePart") then
+			ped.Transparency = 0
+			ped.Color = Color3.fromRGB(70, 70, 80)
+		end
+	end
+	s.plot = nil
+end
+
+local function freeSlot(s: Session.State): number?
+	local unlocked = Config.GarageLevels[s.data.garage].slots
+	for slot = 1, unlocked do
+		if s.data.racks[tostring(slot)] == nil then
+			return slot
+		end
+	end
+	return nil
+end
+
+local function weakestSlot(s: Session.State): (number?, number)
+	local unlocked = Config.GarageLevels[s.data.garage].slots
+	local best, bestCps = nil, math.huge
+	for slot = 1, unlocked do
+		local item = s.data.racks[tostring(slot)]
+		if item then
+			local cps = Loot.cps(item)
+			if cps < bestCps then
+				best, bestCps = slot, cps
+			end
+		end
+	end
+	return best, bestCps
+end
+
+local function sellItem(s: Session.State, item: Loot.Item): number
+	local value = Loot.sellValue(item, s.data.rebirths)
+	Session.addCash(s, value)
+	return value
+end
+
+-- Odkłada wszystkie niesione przedmioty. Gdy brak wolnych stojaków,
+-- słabszy z pary (nowy vs najsłabszy na stojaku) idzie do Skupu.
+function Garage.deposit(s: Session.State)
+	if #s.carried == 0 then
+		return
+	end
+	local items = Inventory.takeAll(s)
+	local placed, soldTotal = 0, 0
+	for _, item in ipairs(items) do
+		local slot = freeSlot(s)
+		if slot then
+			s.data.racks[tostring(slot)] = item
+			placed += 1
+		else
+			local weak, weakCps = weakestSlot(s)
+			if weak and Loot.cps(item) > weakCps then
+				local old = s.data.racks[tostring(weak)]
+				s.data.racks[tostring(weak)] = item
+				soldTotal += sellItem(s, old)
+				placed += 1
+			else
+				soldTotal += sellItem(s, item)
+			end
+		end
+	end
+	Garage.refresh(s)
+	Session.sync(s)
+	local msg = "Zabezpieczono " .. placed .. " szt. w garażu"
+	if soldTotal > 0 then
+		msg ..= " · Skup: +" .. Format.money(soldTotal)
+	end
+	Net.notify(s.player, msg, "good")
+end
+
+function Garage.sellSlot(player: Player, slot: number)
+	local s = Session.get(player)
+	if not s then
+		return
+	end
+	local item = s.data.racks[tostring(slot)]
+	if not item then
+		return
+	end
+	s.data.racks[tostring(slot)] = nil
+	local value = sellItem(s, item)
+	Garage.refresh(s)
+	Session.sync(s)
+	Net.notify(player, "Sprzedano " .. Loot.displayName(item) .. " za " .. Format.money(value), "good")
+end
+
+function Garage.collect(s: Session.State)
+	if s.data.pending < 1 then
+		return
+	end
+	local amount = math.floor(s.data.pending)
+	s.data.pending -= amount
+	Session.addCash(s, amount)
+	Session.sync(s)
+	Net.event("Alert"):FireClient(s.player, { kind = "collect", amount = amount })
+end
+
+local function updatePadLabel(s: Session.State)
+	if not s.plot then
+		return
+	end
+	local pad = plotFolder(s.plot):FindFirstChild("Pad")
+	local gui = pad and pad:FindFirstChild("PadGui")
+	local label = gui and gui:FindFirstChild("PadLabel") :: TextLabel?
+	if label then
+		label.Text = "KASA: " .. Format.money(s.data.pending)
+	end
+end
+
+-- Co sekundę: dochód trafia do Kasy (z limitem 30 min dochodu)
+function Garage.incomeTick(s: Session.State, dt: number)
+	local cps = Session.totalCps(s)
+	local cap = math.max(1000, cps * Config.Economy.PendingCapSeconds)
+	s.data.pending = math.min(cap, s.data.pending + cps * dt)
+	updatePadLabel(s)
+end
+
+-- Kilka razy na sekundę: wejście do garażu i na Kasę
+function Garage.positionTick(s: Session.State, pos: Vector3)
+	if not s.plot then
+		return
+	end
+	local here = Geo.plotAt(pos)
+	if here == s.plot then
+		if #s.carried > 0 and s.tug == nil then
+			Garage.deposit(s)
+		end
+		local pad = plotFolder(s.plot):FindFirstChild("Pad") :: BasePart?
+		if pad then
+			local d = Vector2.new(pos.X - pad.Position.X, pos.Z - pad.Position.Z).Magnitude
+			if d < 4 then
+				Garage.collect(s)
+			end
+		end
+	end
+end
+
+function Garage.init()
+	for i = 1, Config.Layout.PlotCount do
+		local pedestals = plotFolder(i):WaitForChild("Pedestals")
+		for _, ped in ipairs(pedestals:GetChildren()) do
+			local prompt = ped:FindFirstChild("SellPrompt") :: ProximityPrompt?
+			local slot = ped:GetAttribute("Slot")
+			if prompt and type(slot) == "number" then
+				prompt.Triggered:Connect(function(player: Player)
+					if owners[i] ~= player then
+						Net.notify(player, "To nie twój garaż!", "bad")
+						return
+					end
+					Garage.sellSlot(player, slot)
+				end)
+			end
+		end
+	end
+	Players.PlayerRemoving:Connect(function(player)
+		for i, p in pairs(owners) do
+			if p == player then
+				owners[i] = nil
+			end
+		end
+	end)
+end
+
+return Garage
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="31">
+        <Properties>
+          <string name="Name">Hazards</string>
+          <string name="Source"><![CDATA[-- Rzeczy, które produkują klipy: łup na ziemi, łup zatopiony w kanale,
+-- skórki od banana, tarcza magnesowa.
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Loot = require(Shared.Loot)
+local Geo = require(Shared.Geo)
+
+local Session = require(script.Parent.Session)
+local Models = require(script.Parent.Models)
+local Inventory = require(script.Parent.Inventory)
+local Net = require(script.Parent.Net)
+
+local Hazards = {}
+
+local lootFolder = Instance.new("Folder")
+lootFolder.Name = "Loot"
+lootFolder.Parent = workspace
+
+type Sunk = { item: Loot.Item, position: Vector3, expires: number, marker: Instance }
+local sunk: { Sunk } = {}
+
+----------------------------------------------------------------------
+-- Łup na ziemi: każdy może podnieść (ProximityPrompt)
+----------------------------------------------------------------------
+function Hazards.spawnGroundLoot(item: Loot.Item, position: Vector3)
+	local model = Models.brainrot(item)
+	model:PivotTo(CFrame.new(position + Vector3.new(0, 1.5, 0)))
+	for _, d in ipairs(model:GetDescendants()) do
+		if d:IsA("BasePart") then
+			d.Anchored = true
+		end
+	end
+	Models.label(model, item, "Wolny łup!", 80)
+	local prompt = Instance.new("ProximityPrompt")
+	prompt.ActionText = "Podnieś"
+	prompt.ObjectText = Loot.displayName(item)
+	prompt.HoldDuration = 0.3
+	prompt.MaxActivationDistance = 8
+	prompt.RequiresLineOfSight = false
+	prompt.Parent = model.PrimaryPart
+	model.Parent = lootFolder
+
+	local taken = false
+	prompt.Triggered:Connect(function(player: Player)
+		if taken then
+			return
+		end
+		local s = Session.get(player)
+		if not s then
+			return
+		end
+		if s.tug or s.fishing then
+			return
+		end
+		if Inventory.isFull(s) then
+			Net.notify(player, "Nie masz miejsca! Ulepsz transport w sklepie.", "bad")
+			return
+		end
+		taken = true
+		model:Destroy()
+		Inventory.add(s, item)
+		Net.notify(player, "Podniesiono: " .. Loot.displayName(item), "good")
+	end)
+
+	task.delay(Config.Hazards.GroundLootLifetime, function()
+		if not taken and model.Parent then
+			taken = true
+			model:Destroy()
+		end
+	end)
+end
+
+-- Wyrzuca przedmiot obok pozycji (rozrzut 4-6 studs)
+function Hazards.scatter(item: Loot.Item, around: Vector3)
+	local angle = math.random() * math.pi * 2
+	local r = 4 + math.random() * 2
+	local pos = around + Vector3.new(math.cos(angle) * r, 0, math.sin(angle) * r)
+	if Geo.inWater(Vector3.new(pos.X, -1, pos.Z)) and not Geo.pierAt(pos) then
+		Hazards.sink(item, Vector3.new(pos.X, Config.Layout.WaterY, pos.Z), nil)
+		return
+	end
+	Hazards.spawnGroundLoot(item, Vector3.new(pos.X, math.max(around.Y - 3, 0.5), pos.Z))
+end
+
+----------------------------------------------------------------------
+-- Zatopiony łup: kto pierwszy rzuci magnes w pobliżu, ten go wyłowi
+----------------------------------------------------------------------
+function Hazards.sink(item: Loot.Item, position: Vector3, ownerName: string?)
+	local marker = Instance.new("Part")
+	marker.Name = "SunkLoot"
+	marker.Anchored = true
+	marker.CanCollide = false
+	marker.CanQuery = false
+	marker.Shape = Enum.PartType.Cylinder
+	marker.Size = Vector3.new(0.3, 6, 6)
+	marker.CFrame = CFrame.new(position.X, Config.Layout.WaterY + 0.1, position.Z) * CFrame.Angles(0, 0, math.rad(90))
+	marker.Material = Enum.Material.Neon
+	local rarity = Loot.rarityOf(item)
+	marker.Color = rarity.color
+	marker.Transparency = 0.4
+	local bubbles = Instance.new("ParticleEmitter")
+	bubbles.Rate = 12
+	bubbles.Lifetime = NumberRange.new(0.6, 1.2)
+	bubbles.Speed = NumberRange.new(3, 6)
+	bubbles.SpreadAngle = Vector2.new(25, 25)
+	bubbles.EmissionDirection = Enum.NormalId.Right
+	bubbles.Size = NumberSequence.new(0.4)
+	bubbles.Parent = marker
+	if rarity.inHands then
+		local pillar = Models.lightPillar(rarity.color)
+		pillar.Anchored = true
+		pillar.CFrame = CFrame.new(position + Vector3.new(0, 150, 0)) * CFrame.Angles(0, 0, math.rad(90))
+		pillar.Parent = marker
+	end
+	marker.Parent = lootFolder
+
+	table.insert(sunk, {
+		item = item,
+		position = position,
+		expires = os.clock() + Config.Hazards.SunkLootLifetime,
+		marker = marker,
+	})
+	if rarity.inHands then
+		Net.alert({
+			kind = "sunk",
+			rarity = Config.RarityIndex[rarity.id],
+			itemName = Loot.displayName(item),
+			player = ownerName or "",
+		})
+	end
+end
+
+function Hazards.takeSunkNear(position: Vector3): Loot.Item?
+	local best, bestDist = nil, Config.Hazards.SunkLootRadius
+	for i, entry in ipairs(sunk) do
+		local d = Vector2.new(entry.position.X - position.X, entry.position.Z - position.Z).Magnitude
+		if d <= bestDist then
+			best, bestDist = i, d
+		end
+	end
+	if best then
+		local entry = table.remove(sunk, best) :: Sunk
+		entry.marker:Destroy()
+		return entry.item
+	end
+	return nil
+end
+
+function Hazards.cleanup()
+	local now = os.clock()
+	for i = #sunk, 1, -1 do
+		if now >= sunk[i].expires then
+			sunk[i].marker:Destroy()
+			table.remove(sunk, i)
+		end
+	end
+end
+
+-- Wejście do wody: każdy niesiony przedmiot tonie z szansą 50%
+function Hazards.waterTick(s: Session.State, pos: Vector3)
+	local wet = Geo.inWater(pos)
+	if wet and not s.inWater then
+		s.inWater = true
+		if s.tug then
+			return
+		end
+		local lost = 0
+		for i = #s.carried, 1, -1 do
+			if math.random() < Config.Hazards.SinkChance then
+				local item = s.carried[i]
+				table.remove(s.carried, i)
+				local offset = Vector3.new(math.random(-3, 3), 0, math.random(-3, 3))
+				Hazards.sink(item, pos + offset, s.player.DisplayName)
+				lost += 1
+			end
+		end
+		if lost > 0 then
+			Inventory.changed(s)
+			Net.notify(s.player, "PLUSK! Zatonęło " .. lost .. " szt. łupu - ktoś może je wyłowić!", "bad")
+		end
+		Net.alert({ kind = "splash", player = s.player.DisplayName, position = pos })
+	elseif not wet and s.inWater then
+		s.inWater = false
+	end
+end
+
+----------------------------------------------------------------------
+-- Skórka od banana
+----------------------------------------------------------------------
+function Hazards.placeBanana(player: Player)
+	local s = Session.get(player)
+	local root = Inventory.rootOf(player)
+	if not s or not root then
+		return
+	end
+	if not Inventory.isEquipped(player, Inventory.ToolNames.Banana) then
+		return
+	end
+	if s.data.bananas <= 0 then
+		return
+	end
+	if s.bananasPlaced >= Config.Hazards.MaxBananas then
+		Net.notify(player, "Maks. " .. Config.Hazards.MaxBananas .. " skórki naraz", "bad")
+		return
+	end
+	if Geo.isSafe(root.Position) then
+		Net.notify(player, "W garażu nie ma kogo trollować", "bad")
+		return
+	end
+	s.data.bananas -= 1
+	s.bananasPlaced += 1
+	Inventory.refreshTools(s)
+	Session.sync(s)
+
+	local peel = Instance.new("Part")
+	peel.Name = "BananaPeel"
+	peel.Anchored = true
+	peel.CanCollide = false
+	peel.Size = Vector3.new(2.2, 0.3, 1.2)
+	peel.Color = Color3.fromRGB(255, 220, 40)
+	peel.Material = Enum.Material.SmoothPlastic
+	peel.CFrame = CFrame.new(root.Position.X, root.Position.Y - 2.9, root.Position.Z) * CFrame.Angles(0, math.random() * 6.28, 0)
+	peel.Parent = lootFolder
+
+	local done = false
+	local function finish()
+		if done then
+			return
+		end
+		done = true
+		peel:Destroy()
+		s.bananasPlaced = math.max(0, s.bananasPlaced - 1)
+	end
+
+	peel.Touched:Connect(function(hit: BasePart)
+		if done then
+			return
+		end
+		local character = hit.Parent
+		local victim = character and Players:GetPlayerFromCharacter(character)
+		if not victim or victim == player then
+			return
+		end
+		local vs = Session.get(victim)
+		local vroot = Inventory.rootOf(victim)
+		if not vs or not vroot or Session.isProtected(vs) then
+			return
+		end
+		finish()
+		Net.event("Ragdoll"):FireClient(victim, Config.Hazards.SlipSeconds, vroot.CFrame.LookVector * 30 + Vector3.new(0, 25, 0))
+		local item = Inventory.topBackpack(vs) or Inventory.top(vs)
+		if item and not vs.tug then
+			Inventory.remove(vs, item.uid)
+			Hazards.scatter(item, vroot.Position)
+			Net.notify(victim, "Poślizgnąłeś się na skórce gracza " .. player.DisplayName .. "! Wypadło: " .. Loot.displayName(item), "bad")
+		end
+		Net.notify(player, victim.DisplayName .. " wywinął orła na twojej skórce!", "good")
+		Net.alert({ kind = "slip", player = victim.DisplayName, position = vroot.Position })
+	end)
+	task.delay(Config.Hazards.BananaLifetime, finish)
+end
+
+----------------------------------------------------------------------
+-- Tarcza magnesowa
+----------------------------------------------------------------------
+function Hazards.useShield(player: Player)
+	local s = Session.get(player)
+	local character = player.Character
+	if not s or not character or not s.data.shield then
+		return
+	end
+	if not Inventory.isEquipped(player, Inventory.ToolNames.Shield) then
+		return
+	end
+	if not Session.cooldownReady(s, "shield") then
+		Net.notify(player, "Tarcza się ładuje", "bad")
+		return
+	end
+	local cfg = Config.Items.Shield
+	Session.setCooldown(s, "shield", cfg.cooldown)
+	s.shieldUntil = os.clock() + cfg.duration
+	local ff = Instance.new("ForceField")
+	ff.Visible = true
+	ff.Parent = character
+	task.delay(cfg.duration, function()
+		ff:Destroy()
+	end)
+	Net.notify(player, "Tarcza aktywna przez " .. cfg.duration .. " s", "good")
+end
+
+function Hazards.isShielded(s: Session.State): boolean
+	return os.clock() < s.shieldUntil
+end
+
+return Hazards
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="32">
+        <Properties>
+          <string name="Name">Inventory</string>
+          <string name="Source"><![CDATA[-- Niesione przedmioty (plecak + ręce), ich wizualizacja na postaci,
+-- prędkość ruchu i narzędzia gracza. Jedyne miejsce, które modyfikuje
+-- listę session.carried.
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Loot = require(Shared.Loot)
+
+local Session = require(script.Parent.Session)
+local Models = require(script.Parent.Models)
+
+local Inventory = {}
+
+local TOOL_FISH = "Wędka Magnetyczna"
+local TOOL_STEAL = "Hak do Kradzieży"
+local TOOL_BANANA = "Skórka od Banana"
+local TOOL_SHIELD = "Tarcza Magnesowa"
+Inventory.ToolNames = {
+	Fish = TOOL_FISH,
+	Steal = TOOL_STEAL,
+	Banana = TOOL_BANANA,
+	Shield = TOOL_SHIELD,
+}
+
+local function torsoOf(character: Model): BasePart?
+	local torso = character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso")
+	if torso and torso:IsA("BasePart") then
+		return torso
+	end
+	return nil
+end
+
+function Inventory.rootOf(player: Player): BasePart?
+	local character = player.Character
+	if not character then
+		return nil
+	end
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
+	if not humanoid or humanoid.Health <= 0 then
+		return nil
+	end
+	return character:FindFirstChild("HumanoidRootPart") :: BasePart?
+end
+
+function Inventory.isFull(s: Session.State): boolean
+	return #s.carried >= Session.capacity(s)
+end
+
+-- Przedmiot z rąk (Secret+) ma priorytet jako cel kradzieży
+function Inventory.handItem(s: Session.State): Loot.Item?
+	for _, item in ipairs(s.carried) do
+		if Loot.rarityOf(item).inHands then
+			return item
+		end
+	end
+	return nil
+end
+
+function Inventory.top(s: Session.State): Loot.Item?
+	return Inventory.handItem(s) or s.carried[#s.carried]
+end
+
+function Inventory.topBackpack(s: Session.State): Loot.Item?
+	local hand = Inventory.handItem(s)
+	for i = #s.carried, 1, -1 do
+		if s.carried[i] ~= hand then
+			return s.carried[i]
+		end
+	end
+	return nil
+end
+
+local function clearVisuals(s: Session.State)
+	for _, model in pairs(s.carriedModels) do
+		model:Destroy()
+	end
+	table.clear(s.carriedModels)
+	if s.pillar then
+		s.pillar:Destroy()
+		s.pillar = nil
+	end
+end
+
+function Inventory.rebuildVisuals(s: Session.State)
+	clearVisuals(s)
+	local character = s.player.Character
+	if not character then
+		return
+	end
+	local torso = torsoOf(character)
+	local root = character:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if not torso or not root then
+		return
+	end
+
+	local hand = Inventory.handItem(s)
+	local stackIndex = 0
+	for _, item in ipairs(s.carried) do
+		local model = Models.brainrot(item)
+		local body = model.PrimaryPart :: BasePart
+		if item == hand then
+			model:ScaleTo(model:GetScale() * 0.8)
+			model:PivotTo(root.CFrame * CFrame.new(0, 0.5, -2.6))
+			Models.label(model, item, nil, 120)
+		else
+			model:ScaleTo(model:GetScale() * 0.5)
+			model:PivotTo(torso.CFrame * CFrame.new(0, 0.2 + stackIndex * 1.5, 1.6))
+			stackIndex += 1
+		end
+		for _, d in ipairs(model:GetDescendants()) do
+			if d:IsA("BasePart") then
+				d.Anchored = false
+				d.Massless = true
+				d.CanCollide = false
+			end
+		end
+		local w = Instance.new("WeldConstraint")
+		w.Part0 = if item == hand then root else torso
+		w.Part1 = body
+		w.Parent = body
+		model.Parent = character
+		s.carriedModels[item.uid] = model
+	end
+
+	if hand then
+		local rarity = Loot.rarityOf(hand)
+		local pillar = Models.lightPillar(rarity.color)
+		pillar.CFrame = CFrame.new(root.Position + Vector3.new(0, 152, 0)) * CFrame.Angles(0, 0, math.rad(90))
+		pillar.Anchored = false
+		local w = Instance.new("WeldConstraint")
+		w.Part0 = root
+		w.Part1 = pillar
+		w.Parent = pillar
+		pillar.Parent = character
+		s.pillar = pillar
+	end
+end
+
+function Inventory.updateSpeed(s: Session.State)
+	local character = s.player.Character
+	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+	if not humanoid then
+		return
+	end
+	local m = Config.Movement
+	local speed = m.BaseSpeed * math.max(m.MinSpeedFactor, 1 - m.PerItemPenalty * #s.carried)
+	if Inventory.handItem(s) then
+		speed *= m.HandItemFactor
+	end
+	if s.tug then
+		speed *= Config.Steal.TugSpeedMult
+	end
+	if s.fishing then
+		speed = 0
+	end
+	humanoid.WalkSpeed = speed
+	humanoid.UseJumpPower = false
+	humanoid.JumpHeight = if s.fishing then 0 else 7.2
+end
+
+function Inventory.changed(s: Session.State)
+	Inventory.rebuildVisuals(s)
+	Inventory.updateSpeed(s)
+	Session.sync(s)
+end
+
+-- Zwraca false, gdy brak miejsca
+function Inventory.add(s: Session.State, item: Loot.Item): boolean
+	if Inventory.isFull(s) then
+		return false
+	end
+	table.insert(s.carried, item)
+	Inventory.changed(s)
+	return true
+end
+
+function Inventory.remove(s: Session.State, uid: string): Loot.Item?
+	for i, item in ipairs(s.carried) do
+		if item.uid == uid then
+			table.remove(s.carried, i)
+			Inventory.changed(s)
+			return item
+		end
+	end
+	return nil
+end
+
+function Inventory.takeAll(s: Session.State): { Loot.Item }
+	local items = s.carried
+	s.carried = {}
+	Inventory.changed(s)
+	return items
+end
+
+function Inventory.modelOf(s: Session.State, uid: string): Model?
+	return s.carriedModels[uid]
+end
+
+----------------------------------------------------------------------
+-- Narzędzia
+----------------------------------------------------------------------
+local function findTool(player: Player, name: string): Tool?
+	local backpack = player:FindFirstChildOfClass("Backpack")
+	local inBackpack = backpack and backpack:FindFirstChild(name)
+	if inBackpack and inBackpack:IsA("Tool") then
+		return inBackpack
+	end
+	local character = player.Character
+	local equipped = character and character:FindFirstChild(name)
+	if equipped and equipped:IsA("Tool") then
+		return equipped
+	end
+	return nil
+end
+
+function Inventory.isEquipped(player: Player, name: string): boolean
+	local character = player.Character
+	local tool = character and character:FindFirstChild(name)
+	return tool ~= nil and tool:IsA("Tool")
+end
+
+function Inventory.equippedTool(player: Player, name: string): Tool?
+	local character = player.Character
+	local tool = character and character:FindFirstChild(name)
+	if tool and tool:IsA("Tool") then
+		return tool
+	end
+	return nil
+end
+
+function Inventory.refreshTools(s: Session.State)
+	local player = s.player
+	local backpack = player:FindFirstChildOfClass("Backpack") or player:WaitForChild("Backpack", 5)
+	if not backpack or not player.Character then
+		return
+	end
+	if not findTool(player, TOOL_FISH) then
+		Models.tool(TOOL_FISH, Color3.fromRGB(200, 40, 40), "Przytrzymaj i puść nad kanałem").Parent = backpack
+	end
+	if not findTool(player, TOOL_STEAL) then
+		Models.tool(TOOL_STEAL, Color3.fromRGB(40, 90, 220), "Kliknij gracza niosącego łup").Parent = backpack
+	end
+	local banana = findTool(player, TOOL_BANANA)
+	if s.data.bananas > 0 then
+		if not banana then
+			banana = Models.tool(TOOL_BANANA, Color3.fromRGB(255, 220, 40), "Połóż pułapkę pod nogami")
+			banana.Parent = backpack
+		end
+		(banana :: Tool).ToolTip = "Skórki: " .. s.data.bananas
+	elseif banana then
+		banana:Destroy()
+	end
+	if s.data.shield and not findTool(player, TOOL_SHIELD) then
+		Models.tool(TOOL_SHIELD, Color3.fromRGB(60, 220, 255), "8 s odporności na kradzież").Parent = backpack
+	end
+end
+
+return Inventory
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="33">
+        <Properties>
+          <string name="Name">MapBuilder</string>
+          <string name="Source"><![CDATA[-- Buduje całą mapę kodem: ulica, 8 garaży ze stojakami, kanał z wodą
+-- (Terrain), 3 pomosty ze strefami, most kolejowy. Dzięki temu plik
+-- .rbxlx działa od razu po otwarciu w Studio, bez ręcznego budowania.
+local Lighting = game:GetService("Lighting")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Geo = require(Shared.Geo)
+
+local L = Config.Layout
+local MapBuilder = {}
+
+local map: Folder
+
+local function block(name: string, size: Vector3, cf: CFrame, color: Color3, material: Enum.Material, parent: Instance?): Part
+	local p = Instance.new("Part")
+	p.Name = name
+	p.Anchored = true
+	p.Size = size
+	p.CFrame = cf
+	p.Color = color
+	p.Material = material
+	p.TopSurface = Enum.SurfaceType.Smooth
+	p.BottomSurface = Enum.SurfaceType.Smooth
+	p.Parent = parent or map
+	return p
+end
+
+local function sign(parent: BasePart, text: string, color: Color3, face: Enum.NormalId)
+	local gui = Instance.new("SurfaceGui")
+	gui.Face = face
+	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+	gui.PixelsPerStud = 25
+	gui.LightInfluence = 0
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.fromScale(1, 1)
+	label.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+	label.TextColor3 = color
+	label.Font = Enum.Font.FredokaOne
+	label.TextScaled = true
+	label.Text = text
+	label.Parent = gui
+	gui.Parent = parent
+end
+
+local function billboard(parent: BasePart, text: string, color: Color3, offset: number, size: Vector2?, name: string?): TextLabel
+	local gui = Instance.new("BillboardGui")
+	gui.Name = name or "BillboardGui"
+	local s = size or Vector2.new(260, 70)
+	gui.Size = UDim2.fromOffset(s.X, s.Y)
+	gui.StudsOffsetWorldSpace = Vector3.new(0, offset, 0)
+	gui.MaxDistance = 250
+	gui.LightInfluence = 0
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.fromScale(1, 1)
+	label.BackgroundTransparency = 1
+	label.TextColor3 = color
+	label.TextStrokeTransparency = 0.2
+	label.Font = Enum.Font.FredokaOne
+	label.TextScaled = true
+	label.Text = text
+	label.Parent = gui
+	gui.Parent = parent
+	return label
+end
+
+local function buildGround()
+	local concrete = Color3.fromRGB(95, 95, 100)
+	local grass = Color3.fromRGB(70, 110, 60)
+	local canalLen = L.ZoneLength * #Config.Zones + 5
+	local w = L.MapHalfWidth * 2
+	-- Ulica + teren garaży (od tyłu garaży do brzegu kanału)
+	local streetDepth = L.CanalStartZ - L.StreetMinZ
+	block("Street", Vector3.new(w, 16, streetDepth), CFrame.new(0, -8, L.StreetMinZ + streetDepth / 2), concrete, Enum.Material.Asphalt)
+	-- Pasy terenu po bokach kanału i za nim
+	local sideW = L.MapHalfWidth - L.CanalMaxX
+	block("BankLeft", Vector3.new(sideW, 16, canalLen + 30), CFrame.new(-L.MapHalfWidth + sideW / 2, -8, L.CanalStartZ + (canalLen + 30) / 2), grass, Enum.Material.Grass)
+	block("BankRight", Vector3.new(sideW, 16, canalLen + 30), CFrame.new(L.MapHalfWidth - sideW / 2, -8, L.CanalStartZ + (canalLen + 30) / 2), grass, Enum.Material.Grass)
+	block("BankBack", Vector3.new(L.CanalMaxX - L.CanalMinX, 16, 30), CFrame.new(0, -8, L.CanalStartZ + canalLen + 15), grass, Enum.Material.Grass)
+	-- Dno kanału
+	block("CanalFloor", Vector3.new(L.CanalMaxX - L.CanalMinX, 2, canalLen), CFrame.new(0, L.FloorY - 1, L.CanalStartZ + canalLen / 2), Color3.fromRGB(60, 55, 40), Enum.Material.Mud)
+
+	-- Woda: Terrain (pływanie działa), a gdy go brak - półprzezroczysta płyta
+	local terrain = workspace:FindFirstChildOfClass("Terrain")
+	local waterTop = L.WaterY
+	local waterH = waterTop - L.FloorY
+	local waterCf = CFrame.new(0, L.FloorY + waterH / 2, L.CanalStartZ + canalLen / 2)
+	local waterSize = Vector3.new(L.CanalMaxX - L.CanalMinX, waterH, canalLen)
+	if terrain then
+		terrain.WaterColor = Color3.fromRGB(60, 80, 45)
+		terrain.WaterTransparency = 0.35
+		terrain.WaterReflectance = 0.2
+		terrain.WaterWaveSize = 0.08
+		terrain:FillBlock(waterCf, waterSize, Enum.Material.Water)
+	else
+		local water = block("WaterFallback", waterSize, waterCf, Color3.fromRGB(60, 80, 45), Enum.Material.Glass)
+		water.Transparency = 0.4
+		water.CanCollide = false
+	end
+
+	-- Niewidzialne ściany granic mapy
+	local h = 120
+	for _, data in ipairs({
+		{ Vector3.new(w, h, 2), Vector3.new(0, h / 2, L.StreetMinZ - 1) },
+		{ Vector3.new(w, h, 2), Vector3.new(0, h / 2, L.CanalStartZ + canalLen + 31) },
+		{ Vector3.new(2, h, canalLen + 200), Vector3.new(-L.MapHalfWidth - 1, h / 2, 60) },
+		{ Vector3.new(2, h, canalLen + 200), Vector3.new(L.MapHalfWidth + 1, h / 2, 60) },
+	}) do
+		local wall = block("Boundary", data[1], CFrame.new(data[2]), Color3.new(1, 1, 1), Enum.Material.SmoothPlastic)
+		wall.Transparency = 1
+	end
+end
+
+local function buildPiers()
+	local canalEnd = L.CanalStartZ + L.ZoneLength * #Config.Zones
+	for _, x in ipairs(L.PierXs) do
+		local length = canalEnd - L.CanalStartZ + 3
+		local deck = block("Pier", Vector3.new(L.PierWidth, 1, length), CFrame.new(x, 0, L.CanalStartZ - 2 + length / 2), Color3.fromRGB(120, 85, 55), Enum.Material.WoodPlanks)
+		deck:SetAttribute("Pier", true)
+		-- Słupy
+		for z = L.CanalStartZ + 10, canalEnd, 20 do
+			for _, side in ipairs({ -1, 1 }) do
+				local postH = -L.FloorY + 0.5
+				block("Post", Vector3.new(1, postH, 1), CFrame.new(x + side * (L.PierWidth / 2 - 0.5), -postH / 2, z), Color3.fromRGB(80, 55, 35), Enum.Material.Wood)
+			end
+		end
+		-- Pasy stref + tablice
+		for i, zone in ipairs(Config.Zones) do
+			local z0 = L.CanalStartZ + (i - 1) * L.ZoneLength
+			for _, side in ipairs({ -1, 1 }) do
+				local stripe = block("ZoneStripe", Vector3.new(0.6, 0.2, L.ZoneLength - 1), CFrame.new(x + side * (L.PierWidth / 2 - 0.3), 0.6, z0 + L.ZoneLength / 2), zone.color, Enum.Material.Neon)
+				stripe.CanCollide = false
+			end
+			local pole = block("ZoneSign", Vector3.new(0.6, 6, 0.6), CFrame.new(x + L.PierWidth / 2 - 0.3, 3.5, z0 + 2), Color3.fromRGB(40, 40, 45), Enum.Material.Metal)
+			billboard(pole, "STREFA " .. i .. ": " .. string.upper(zone.name) .. "\nwymagany zasięg " .. zone.reach .. " m", zone.color, 4)
+		end
+	end
+	-- Pochylnie z dna kanału na brzeg (wyjście dla tych, którzy wpadli)
+	local depth = -L.FloorY
+	local run = depth * 2
+	local slope = math.atan2(depth, run)
+	for _, x in ipairs({ -205, -70, 70, 205 }) do
+		local ramp = block("Ramp", Vector3.new(6, 1, math.sqrt(depth * depth + run * run)), CFrame.new(x, -depth / 2, L.CanalStartZ + run / 2) * CFrame.Angles(slope, 0, 0), Color3.fromRGB(110, 110, 100), Enum.Material.DiamondPlate)
+		ramp:SetAttribute("Ramp", true)
+	end
+
+	-- Most kolejowy nad strefą 3 ("Pod Mostem")
+	local bridgeZ = L.CanalStartZ + L.ZoneLength * 2.5
+	block("RailBridge", Vector3.new(L.MapHalfWidth * 2, 3, 14), CFrame.new(0, 24, bridgeZ), Color3.fromRGB(90, 60, 50), Enum.Material.CorrodedMetal)
+	for _, x in ipairs({ -210, -70, 70, 210 }) do
+		block("BridgePillar", Vector3.new(4, 40, 4), CFrame.new(x, 4, bridgeZ), Color3.fromRGB(110, 100, 95), Enum.Material.Concrete)
+	end
+	-- Wylot ścieku na końcu kanału (strefa 5)
+	local pipe = block("SewerPipe", Vector3.new(10, 18, 18), CFrame.new(0, -2, canalEnd + 12) * CFrame.Angles(0, math.rad(90), 0), Color3.fromRGB(70, 75, 60), Enum.Material.CorrodedMetal)
+	pipe.Shape = Enum.PartType.Cylinder
+end
+
+-- Struktura działki: Plot_i/{Floor, Sign, Pad, Pedestals/Pedestal_n, Items}
+local function buildPlot(index: number)
+	local folder = Instance.new("Folder")
+	folder.Name = "Plot_" .. index
+	folder:SetAttribute("Index", index)
+	folder.Parent = map
+
+	local c = Geo.plotCenter(index)
+	local sx, sz = L.PlotSizeX, L.PlotSizeZ
+	local floorColor = Color3.fromHSV((index - 1) / L.PlotCount, 0.35, 0.75)
+	block("Floor", Vector3.new(sx, 1, sz), CFrame.new(c.X, -0.3, c.Z), floorColor, Enum.Material.Concrete, folder)
+	local wallColor = Color3.fromRGB(150, 140, 130)
+	block("WallBack", Vector3.new(sx, 12, 1), CFrame.new(c.X, 6, c.Z - sz / 2), wallColor, Enum.Material.Brick, folder)
+	block("WallLeft", Vector3.new(1, 12, sz), CFrame.new(c.X - sx / 2, 6, c.Z), wallColor, Enum.Material.Brick, folder)
+	block("WallRight", Vector3.new(1, 12, sz), CFrame.new(c.X + sx / 2, 6, c.Z), wallColor, Enum.Material.Brick, folder)
+	-- Belka nad wjazdem z nazwą właściciela
+	local beam = block("GateBeam", Vector3.new(sx, 3, 1), CFrame.new(c.X, 13.5, c.Z + sz / 2), Color3.fromRGB(50, 50, 55), Enum.Material.Metal, folder)
+	sign(beam, "WOLNY GARAŻ", Color3.fromRGB(255, 255, 255), Enum.NormalId.Front)
+	sign(beam, "WOLNY GARAŻ", Color3.fromRGB(255, 255, 255), Enum.NormalId.Back)
+	-- Linia Safe Zone na podjeździe
+	local line = block("SafeLine", Vector3.new(sx, 0.1, 0.8), CFrame.new(c.X, 0.25, c.Z + sz / 2 + L.DrivewayDepth), Color3.fromRGB(80, 255, 120), Enum.Material.Neon, folder)
+	line.CanCollide = false
+
+	-- Kasa (odbiór dochodu)
+	local pad = block("Pad", Vector3.new(6, 0.4, 6), CFrame.new(c.X + 17, 0.4, c.Z + sz / 2 - 5), Color3.fromRGB(60, 220, 90), Enum.Material.Neon, folder)
+	local padLabel = billboard(pad, "KASA: $0", Color3.fromRGB(120, 255, 140), 4, Vector2.new(200, 50), "PadGui")
+	padLabel.Name = "PadLabel"
+
+	-- Stojaki: 6 kolumn x 4 rzędy = 24 miejsca
+	local pedestals = Instance.new("Folder")
+	pedestals.Name = "Pedestals"
+	pedestals.Parent = folder
+	local n = 0
+	for row = 0, 3 do
+		for col = 0, 5 do
+			n += 1
+			local x = c.X - 18.75 + col * 7.5
+			local z = c.Z - sz / 2 + 6 + row * 7
+			local ped = block("Pedestal_" .. n, Vector3.new(1.2, 4.5, 4.5), CFrame.new(x, 0.6, z) * CFrame.Angles(0, 0, math.rad(90)), Color3.fromRGB(70, 70, 80), Enum.Material.DiamondPlate, pedestals)
+			ped.Shape = Enum.PartType.Cylinder
+			ped:SetAttribute("Slot", n)
+			local prompt = Instance.new("ProximityPrompt")
+			prompt.Name = "SellPrompt"
+			prompt.ActionText = "Sprzedaj"
+			prompt.ObjectText = ""
+			prompt.HoldDuration = 0.6
+			prompt.MaxActivationDistance = 7
+			prompt.RequiresLineOfSight = false
+			prompt.Enabled = false
+			prompt.Parent = ped
+		end
+	end
+
+	local items = Instance.new("Folder")
+	items.Name = "Items"
+	items.Parent = folder
+end
+
+local function buildDecor()
+	-- Latarnie wzdłuż ulicy
+	for x = -250, 250, 50 do
+		local pole = block("Lamp", Vector3.new(0.8, 14, 0.8), CFrame.new(x, 7, -40), Color3.fromRGB(40, 40, 45), Enum.Material.Metal)
+		local head = block("LampHead", Vector3.new(2, 1, 2), CFrame.new(x, 14.5, -40), Color3.fromRGB(255, 230, 160), Enum.Material.Neon)
+		local light = Instance.new("PointLight")
+		light.Range = 24
+		light.Brightness = 1.5
+		light.Color = Color3.fromRGB(255, 220, 160)
+		light.Parent = head
+		pole.CanCollide = true
+	end
+	-- Tablica startowa
+	local board = block("Welcome", Vector3.new(24, 8, 1), CFrame.new(0, 6, -20), Color3.fromRGB(30, 30, 35), Enum.Material.Metal)
+	sign(board, "MAGNET & STEAL A BRAINROT\nŁów na pomostach → nieś do garażu → nie daj się okraść!", Color3.fromRGB(255, 220, 80), Enum.NormalId.Back)
+	sign(board, "Strefy 1-5: im dalej na pomoście, tym rzadsze Brainroty", Color3.fromRGB(255, 220, 80), Enum.NormalId.Front)
+
+	local spawn = Instance.new("SpawnLocation")
+	spawn.Name = "FallbackSpawn"
+	spawn.Anchored = true
+	spawn.Size = Vector3.new(8, 1, 8)
+	spawn.CFrame = CFrame.new(0, 0.1, -50)
+	spawn.Neutral = true
+	spawn.Duration = 0
+	spawn.Transparency = 1
+	spawn.CanCollide = false
+	spawn.Parent = map
+end
+
+local function buildLighting()
+	Lighting.ClockTime = 14.5
+	Lighting.Brightness = 2
+	Lighting.OutdoorAmbient = Color3.fromRGB(140, 140, 150)
+	if not Lighting:FindFirstChildOfClass("Atmosphere") then
+		local atm = Instance.new("Atmosphere")
+		atm.Density = 0.32
+		atm.Haze = 1.5
+		atm.Color = Color3.fromRGB(200, 190, 170)
+		atm.Parent = Lighting
+	end
+end
+
+function MapBuilder.build(): Folder
+	local existing = workspace:FindFirstChild("Map")
+	if existing then
+		existing:Destroy()
+	end
+	map = Instance.new("Folder")
+	map.Name = "Map"
+	map.Parent = workspace
+	buildGround()
+	buildPiers()
+	for i = 1, L.PlotCount do
+		buildPlot(i)
+	end
+	buildDecor()
+	buildLighting()
+	return map
+end
+
+function MapBuilder.plotFolder(index: number): Folder
+	return map:WaitForChild("Plot_" .. index) :: Folder
+end
+
+return MapBuilder
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="34">
+        <Properties>
+          <string name="Name">Models</string>
+          <string name="Source"><![CDATA[-- Proceduralne modele: Brainroty, słupy światła, narzędzia gracza.
+-- Brak zewnętrznych assetów, więc wszystko składamy z prymitywów.
+local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Brainrots = require(Shared.Brainrots)
+local Loot = require(Shared.Loot)
+local Format = require(Shared.Format)
+
+local Models = {}
+
+local function part(props: { [string]: any }): Part
+	local p = Instance.new("Part")
+	p.TopSurface = Enum.SurfaceType.Smooth
+	p.BottomSurface = Enum.SurfaceType.Smooth
+	p.CanCollide = false
+	p.CanTouch = false
+	p.CanQuery = false
+	p.Massless = true
+	p.CastShadow = true
+	for k, v in pairs(props) do
+		(p :: any)[k] = v
+	end
+	return p
+end
+
+local function weld(a: BasePart, b: BasePart)
+	local w = Instance.new("WeldConstraint")
+	w.Part0 = a
+	w.Part1 = b
+	w.Parent = a
+end
+
+local function addEyes(model: Model, body: BasePart, faceZ: number, eyeY: number, spread: number)
+	for _, side in ipairs({ -1, 1 }) do
+		local eye = part({
+			Name = "Eye",
+			Shape = Enum.PartType.Ball,
+			Size = Vector3.new(0.7, 0.7, 0.7),
+			Color = Color3.new(1, 1, 1),
+			Material = Enum.Material.SmoothPlastic,
+		})
+		eye.CFrame = body.CFrame * CFrame.new(side * spread, eyeY, -faceZ)
+		eye.Parent = model
+		weld(body, eye)
+		local pupil = part({
+			Name = "Pupil",
+			Shape = Enum.PartType.Ball,
+			Size = Vector3.new(0.35, 0.35, 0.35),
+			Color = Color3.new(0, 0, 0),
+			Material = Enum.Material.SmoothPlastic,
+		})
+		pupil.CFrame = eye.CFrame * CFrame.new(0, 0, -0.25)
+		pupil.Parent = model
+		weld(body, pupil)
+	end
+end
+
+local function applyMutation(body: BasePart, mutId: string)
+	if mutId == "Shiny" then
+		body.Material = Enum.Material.Foil
+		body.Reflectance = 0.25
+	elseif mutId == "Gold" then
+		body.Color = Color3.fromRGB(255, 200, 40)
+		body.Material = Enum.Material.Foil
+		body.Reflectance = 0.35
+	elseif mutId == "Diamond" then
+		body.Color = Color3.fromRGB(130, 230, 255)
+		body.Material = Enum.Material.Glass
+		body.Transparency = 0.2
+	elseif mutId == "Radioactive" then
+		body.Color = Color3.fromRGB(90, 255, 60)
+		body.Material = Enum.Material.Neon
+		local light = Instance.new("PointLight")
+		light.Color = body.Color
+		light.Range = 10
+		light.Brightness = 2
+		light.Parent = body
+	elseif mutId == "Rainbow" then
+		body.Material = Enum.Material.Neon
+		CollectionService:AddTag(body, "Rainbow") -- klient płynnie zmienia kolor
+	end
+end
+
+local function applyRarityFx(body: BasePart, rarity: Config.Rarity)
+	if rarity.id == "Secret" then
+		local s = Instance.new("Sparkles")
+		s.SparkleColor = rarity.color
+		s.Parent = body
+	elseif rarity.id == "Cursed" then
+		local f = Instance.new("Fire")
+		f.Color = Color3.fromRGB(80, 255, 40)
+		f.SecondaryColor = Color3.fromRGB(10, 40, 10)
+		f.Size = 3
+		f.Heat = 4
+		f.Parent = body
+	elseif rarity.id == "Mythic" then
+		local s = Instance.new("Sparkles")
+		s.SparkleColor = rarity.color
+		s.Parent = body
+		local light = Instance.new("PointLight")
+		light.Color = rarity.color
+		light.Range = 14
+		light.Brightness = 3
+		light.Parent = body
+	end
+end
+
+-- Buduje model Brainrota. Wszystkie części są przyspawane do "Body"
+-- (PrimaryPart), niekolizyjne i bez masy.
+function Models.brainrot(item: Loot.Item): Model
+	local b = Brainrots.get(item.id)
+	assert(b, "Nieznany brainrot " .. item.id)
+	local rarity = Loot.rarityOf(item)
+
+	local model = Instance.new("Model")
+	model.Name = b.name
+
+	local body: Part
+	local faceZ, eyeY, spread = 1.2, 0.4, 0.55
+	if b.shape == "Ball" then
+		body = part({ Shape = Enum.PartType.Ball, Size = Vector3.new(3, 3, 3) })
+		faceZ, eyeY = 1.35, 0.4
+	elseif b.shape == "Cylinder" then
+		body = part({ Shape = Enum.PartType.Cylinder, Size = Vector3.new(3, 2.4, 2.4) })
+		body.CFrame = CFrame.Angles(0, 0, math.rad(90))
+		faceZ, eyeY = 1.1, 0.5
+	elseif b.shape == "Tall" then
+		body = part({ Size = Vector3.new(2, 3.6, 1.8) })
+		faceZ, eyeY, spread = 0.95, 1.0, 0.45
+	elseif b.shape == "Flat" then
+		body = part({ Shape = Enum.PartType.Cylinder, Size = Vector3.new(0.9, 3.2, 3.2) })
+		body.CFrame = CFrame.Angles(0, 0, math.rad(90))
+		faceZ, eyeY = 1.5, 0.45
+	else
+		body = part({ Size = Vector3.new(3.4, 2.6, 2.4) })
+		faceZ, eyeY = 1.25, 0.4
+	end
+	body.Name = "Body"
+	body.Color = b.color
+	body.Material = Enum.Material.CorrodedMetal
+	body.Parent = model
+	model.PrimaryPart = body
+
+	-- Akcent (pasek / czapka) w kolorze dodatkowym
+	local upright = CFrame.new(body.Position)
+	local accent = part({
+		Name = "Accent",
+		Size = Vector3.new(body.Size.Y > 3 and 2.2 or 2.6, 0.5, 2.0),
+		Color = b.accent,
+		Material = Enum.Material.SmoothPlastic,
+	})
+	local topY = if b.shape == "Tall" then 2.05 elseif b.shape == "Flat" then 0.65 else 1.45
+	accent.CFrame = upright * CFrame.new(0, topY, 0)
+	accent.Parent = model
+	weld(body, accent)
+
+	-- Oczy patrzą w -Z (przód modelu); dla walców liczymy względem pionu
+	local faceRef = part({ Name = "FaceRef", Transparency = 1, Size = Vector3.new(0.2, 0.2, 0.2) })
+	faceRef.CFrame = upright
+	faceRef.Parent = model
+	weld(body, faceRef)
+	addEyes(model, faceRef, faceZ, eyeY, spread)
+
+	-- Korona dla Secret+ (czytelny sygnał rzadkości z daleka)
+	if rarity.inHands then
+		local crown = part({
+			Name = "Crown",
+			Shape = Enum.PartType.Cylinder,
+			Size = Vector3.new(0.6, 1.6, 1.6),
+			Color = rarity.color,
+			Material = Enum.Material.Neon,
+		})
+		crown.CFrame = upright * CFrame.new(0, topY + 0.6, 0) * CFrame.Angles(0, 0, math.rad(90))
+		crown.Parent = model
+		weld(body, crown)
+	end
+
+	applyMutation(body, item.mut)
+	applyRarityFx(body, rarity)
+
+	local scale = Loot.size(item.size).scale
+	if scale ~= 1 then
+		model:ScaleTo(scale)
+	end
+	model:SetAttribute("Uid", item.uid)
+	return model
+end
+
+function Models.label(model: Model, item: Loot.Item, extra: string?, maxDistance: number?)
+	local rarity = Loot.rarityOf(item)
+	local gui = Instance.new("BillboardGui")
+	gui.Name = "Label"
+	gui.Size = UDim2.fromOffset(220, 60)
+	gui.StudsOffsetWorldSpace = Vector3.new(0, 3.2, 0)
+	gui.MaxDistance = maxDistance or 70
+	gui.LightInfluence = 0
+	gui.Adornee = model.PrimaryPart
+
+	local name = Instance.new("TextLabel")
+	name.BackgroundTransparency = 1
+	name.Size = UDim2.new(1, 0, 0.45, 0)
+	name.Font = Enum.Font.FredokaOne
+	name.TextScaled = true
+	name.TextColor3 = Color3.new(1, 1, 1)
+	name.TextStrokeTransparency = 0.3
+	name.Text = Loot.displayName(item)
+	name.Parent = gui
+
+	local tier = Instance.new("TextLabel")
+	tier.BackgroundTransparency = 1
+	tier.Position = UDim2.new(0, 0, 0.45, 0)
+	tier.Size = UDim2.new(1, 0, 0.3, 0)
+	tier.Font = Enum.Font.FredokaOne
+	tier.TextScaled = true
+	tier.TextColor3 = rarity.color
+	tier.TextStrokeTransparency = 0.3
+	tier.Text = string.upper(rarity.id)
+	tier.Parent = gui
+
+	if extra then
+		local ex = Instance.new("TextLabel")
+		ex.BackgroundTransparency = 1
+		ex.Position = UDim2.new(0, 0, 0.75, 0)
+		ex.Size = UDim2.new(1, 0, 0.25, 0)
+		ex.Font = Enum.Font.FredokaOne
+		ex.TextScaled = true
+		ex.TextColor3 = Color3.fromRGB(120, 255, 120)
+		ex.TextStrokeTransparency = 0.3
+		ex.Text = extra
+		ex.Parent = gui
+	end
+	gui.Parent = model
+end
+
+function Models.cpsText(item: Loot.Item, rebirths: number): string
+	return Format.money(Loot.cps(item) * Loot.rebirthMult(rebirths)) .. "/s"
+end
+
+-- Słup światła widoczny z całej mapy (Secret+ w rękach lub na wodzie)
+function Models.lightPillar(color: Color3): Part
+	local p = part({
+		Name = "LightPillar",
+		Shape = Enum.PartType.Cylinder,
+		Size = Vector3.new(300, 3, 3),
+		Color = color,
+		Material = Enum.Material.Neon,
+		Transparency = 0.55,
+		CastShadow = false,
+	})
+	return p
+end
+
+-- Magnes na końcu linki podczas łowienia/kradzieży
+function Models.magnetHead(): Part
+	local p = part({
+		Name = "MagnetHead",
+		Shape = Enum.PartType.Cylinder,
+		Size = Vector3.new(0.8, 1.6, 1.6),
+		Color = Color3.fromRGB(70, 70, 80),
+		Material = Enum.Material.Metal,
+		Anchored = true,
+	})
+	local ring = part({
+		Name = "Ring",
+		Shape = Enum.PartType.Cylinder,
+		Size = Vector3.new(0.85, 1.0, 1.0),
+		Color = Color3.fromRGB(220, 40, 40),
+		Material = Enum.Material.SmoothPlastic,
+	})
+	ring.CFrame = p.CFrame
+	ring.Parent = p
+	weld(p, ring)
+	local a = Instance.new("Attachment")
+	a.Name = "LineAttachment"
+	a.Parent = p
+	return p
+end
+
+function Models.line(a0: Attachment, a1: Attachment, color: Color3): Beam
+	local beam = Instance.new("Beam")
+	beam.Attachment0 = a0
+	beam.Attachment1 = a1
+	beam.Width0 = 0.12
+	beam.Width1 = 0.12
+	beam.Color = ColorSequence.new(color)
+	beam.FaceCamera = true
+	beam.Segments = 12
+	beam.CurveSize0 = -2
+	beam.CurveSize1 = 2
+	beam.LightInfluence = 0
+	beam.Parent = a0.Parent
+	return beam
+end
+
+-- Narzędzie z małym uchwytem (orientacja uchwytu nie ma znaczenia wizualnie)
+function Models.tool(name: string, color: Color3, tip: string): Tool
+	local tool = Instance.new("Tool")
+	tool.Name = name
+	tool.ToolTip = tip
+	tool.CanBeDropped = false
+	tool.RequiresHandle = true
+	tool:SetAttribute("GameTool", true)
+
+	local handle = Instance.new("Part")
+	handle.Name = "Handle"
+	handle.Size = Vector3.new(0.6, 0.6, 1.4)
+	handle.Color = color
+	handle.Material = Enum.Material.SmoothPlastic
+	handle.CanCollide = false
+	handle.Massless = true
+	handle.Parent = tool
+
+	local cap = Instance.new("Part")
+	cap.Name = "Cap"
+	cap.Size = Vector3.new(0.65, 0.65, 0.4)
+	cap.Color = Color3.fromRGB(200, 200, 210)
+	cap.Material = Enum.Material.Metal
+	cap.CanCollide = false
+	cap.Massless = true
+	cap.CFrame = handle.CFrame * CFrame.new(0, 0, -0.85)
+	cap.Parent = tool
+	local w = Instance.new("WeldConstraint")
+	w.Part0 = handle
+	w.Part1 = cap
+	w.Parent = handle
+
+	local tipAtt = Instance.new("Attachment")
+	tipAtt.Name = "Tip"
+	tipAtt.Position = Vector3.new(0, 0, -1)
+	tipAtt.Parent = handle
+	return tool
+end
+
+return Models
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="35">
+        <Properties>
+          <string name="Name">Net</string>
+          <string name="Source"><![CDATA[-- Pomocnicze funkcje sieciowe serwera.
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+
+local Net = {}
+
+function Net.event(name: string): RemoteEvent
+	return Remotes:WaitForChild(name) :: RemoteEvent
+end
+
+function Net.func(name: string): RemoteFunction
+	return Remotes:WaitForChild(name) :: RemoteFunction
+end
+
+-- kind: "info" | "good" | "bad"
+function Net.notify(player: Player, text: string, kind: string?)
+	Net.event("Notify"):FireClient(player, text, kind or "info")
+end
+
+function Net.broadcast(text: string, kind: string?)
+	Net.event("Notify"):FireAllClients(text, kind or "info")
+end
+
+function Net.alert(data: { [string]: any })
+	Net.event("Alert"):FireAllClients(data)
+end
+
+return Net
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="36">
+        <Properties>
+          <string name="Name">Session</string>
+          <string name="Source"><![CDATA[-- Stan gracza: zapisywane dane (DataStore) + stan sesji (niesione przedmioty,
+-- łowienie, przeciąganie liny, cooldowny). Serwer jest jedynym źródłem prawdy.
+local DataStoreService = game:GetService("DataStoreService")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Loot = require(Shared.Loot)
+
+local Session = {}
+
+export type Data = {
+	cash: number,
+	totalEarned: number,
+	magnet: number,
+	rope: number,
+	transport: number,
+	garage: number,
+	rebirths: number,
+	bananas: number,
+	shield: boolean,
+	racks: { [string]: Loot.Item },
+	index: { [string]: boolean },
+	casts: number,
+	castsSinceSecret: number,
+	hadEpic: boolean,
+	newbieDone: boolean,
+	pending: number,
+	lastOnline: number,
+}
+
+export type State = {
+	player: Player,
+	data: Data,
+	loaded: boolean,
+	saveEnabled: boolean,
+	plot: number?,
+	carried: { Loot.Item },
+	carriedModels: { [string]: Model },
+	pillar: BasePart?,
+	fishing: any?,
+	tug: any?,
+	cooldowns: { [string]: number },
+	protectedUntil: number,
+	shieldUntil: number,
+	graceUntil: number,
+	revenge: { [number]: number },
+	inWater: boolean,
+	bananasPlaced: number,
+	offlineEarned: number,
+}
+
+local sessions: { [Player]: State } = {}
+
+local store: DataStore? = nil
+do
+	local ok, result = pcall(function()
+		return DataStoreService:GetDataStore(Config.DataStoreName)
+	end)
+	if ok then
+		store = result
+	else
+		warn("[MSB] DataStore niedostępny:", result)
+	end
+end
+
+local function defaultData(): Data
+	return {
+		cash = Config.Debug.StartCash,
+		totalEarned = 0,
+		magnet = 1,
+		rope = 1,
+		transport = 1,
+		garage = 1,
+		rebirths = 0,
+		bananas = 3,
+		shield = false,
+		racks = {},
+		index = {},
+		casts = 0,
+		castsSinceSecret = 0,
+		hadEpic = false,
+		newbieDone = false,
+		pending = 0,
+		lastOnline = os.time(),
+	}
+end
+
+local function reconcile(data: any): Data
+	local base = defaultData()
+	if type(data) ~= "table" then
+		return base
+	end
+	for k, v in pairs(base) do
+		if data[k] == nil or type(data[k]) ~= type(v) then
+			data[k] = v
+		end
+	end
+	-- Poziomy ulepszeń zawsze w zakresie aktualnej konfiguracji
+	data.magnet = math.clamp(data.magnet, 1, #Config.Magnets)
+	data.rope = math.clamp(data.rope, 1, #Config.Ropes)
+	data.transport = math.clamp(data.transport, 1, #Config.Transports)
+	data.garage = math.clamp(data.garage, 1, #Config.GarageLevels)
+	return data
+end
+
+local function canSave(): boolean
+	if store == nil then
+		return false
+	end
+	if RunService:IsStudio() and not Config.Debug.SaveInStudio then
+		return false
+	end
+	return true
+end
+
+local function key(player: Player): string
+	return "u_" .. player.UserId
+end
+
+function Session.create(player: Player): State
+	local state: State = {
+		player = player,
+		data = defaultData(),
+		loaded = false,
+		saveEnabled = false,
+		plot = nil,
+		carried = {},
+		carriedModels = {},
+		pillar = nil,
+		fishing = nil,
+		tug = nil,
+		cooldowns = {},
+		protectedUntil = 0,
+		shieldUntil = 0,
+		graceUntil = 0,
+		revenge = {},
+		inWater = false,
+		bananasPlaced = 0,
+		offlineEarned = 0,
+	}
+	sessions[player] = state
+
+	local loadedData = nil
+	local ok = true
+	if canSave() then
+		ok = false
+		for attempt = 1, 3 do
+			local success, result = pcall(function()
+				return (store :: DataStore):GetAsync(key(player))
+			end)
+			if success then
+				loadedData = result
+				ok = true
+				break
+			end
+			warn("[MSB] Błąd odczytu danych (próba " .. attempt .. "):", result)
+			-- Brak dostępu do API w Studio nie minie po ponowieniu
+			local message = tostring(result)
+			if string.find(message, "403", 1, true) or string.find(message, "Studio", 1, true) then
+				break
+			end
+			task.wait(1)
+		end
+	end
+
+	state.data = reconcile(loadedData)
+	state.saveEnabled = ok and canSave()
+	state.loaded = true
+
+	-- Dochód offline: 50% CPS, maks. 2 h, trafia do Kasy w garażu
+	if loadedData ~= nil then
+		local away = math.clamp(os.time() - state.data.lastOnline, 0, Config.Economy.OfflineMaxSeconds)
+		local offline = Session.totalCps(state) * away * Config.Economy.OfflineRate
+		state.data.pending += offline
+		state.offlineEarned = offline
+	end
+
+	if not state.data.newbieDone then
+		state.protectedUntil = os.clock() + Config.Economy.NewbieProtectionSeconds
+	end
+	return state
+end
+
+function Session.get(player: Player): State?
+	local s = sessions[player]
+	if s and s.loaded then
+		return s
+	end
+	return nil
+end
+
+function Session.all(): { [Player]: State }
+	return sessions
+end
+
+function Session.save(player: Player)
+	local s = sessions[player]
+	if not s or not s.loaded or not s.saveEnabled then
+		return
+	end
+	s.data.lastOnline = os.time()
+	local data = s.data
+	local ok, err = pcall(function()
+		(store :: DataStore):UpdateAsync(key(player), function()
+			return data
+		end)
+	end)
+	if not ok then
+		warn("[MSB] Błąd zapisu danych gracza " .. player.Name .. ":", err)
+	end
+end
+
+function Session.remove(player: Player)
+	Session.save(player)
+	sessions[player] = nil
+end
+
+function Session.totalCps(s: State): number
+	local total = 0
+	local slots = Config.GarageLevels[s.data.garage].slots
+	for slotKey, item in pairs(s.data.racks) do
+		local slot = tonumber(slotKey)
+		if slot and slot <= slots then
+			total += Loot.cps(item)
+		end
+	end
+	return total * Loot.rebirthMult(s.data.rebirths)
+end
+
+function Session.capacity(s: State): number
+	return Config.Transports[s.data.transport].capacity
+end
+
+function Session.isProtected(s: State): boolean
+	if s.data.newbieDone then
+		return false
+	end
+	if os.clock() >= s.protectedUntil or s.data.totalEarned >= Config.Economy.NewbieProtectionEarnings then
+		s.data.newbieDone = true
+		return false
+	end
+	return true
+end
+
+function Session.addCash(s: State, amount: number)
+	s.data.cash += amount
+	if amount > 0 then
+		s.data.totalEarned += amount
+	end
+end
+
+-- Atrybuty gracza = tanie replikowanie stanu do HUD
+function Session.sync(s: State)
+	local p = s.player
+	local d = s.data
+	p:SetAttribute("Cash", d.cash)
+	p:SetAttribute("Magnet", d.magnet)
+	p:SetAttribute("Rope", d.rope)
+	p:SetAttribute("Transport", d.transport)
+	p:SetAttribute("Garage", d.garage)
+	p:SetAttribute("Rebirths", d.rebirths)
+	p:SetAttribute("Bananas", d.bananas)
+	p:SetAttribute("HasShield", d.shield)
+	p:SetAttribute("Capacity", Session.capacity(s))
+	p:SetAttribute("Carried", #s.carried)
+	p:SetAttribute("CPS", Session.totalCps(s))
+	p:SetAttribute("Pending", d.pending)
+	p:SetAttribute("Protected", Session.isProtected(s))
+	p:SetAttribute("Plot", s.plot or 0)
+	p:SetAttribute("Fishing", s.fishing ~= nil)
+
+	local ls = p:FindFirstChild("leaderstats")
+	if ls then
+		local cash = ls:FindFirstChild("Kasa") :: StringValue?
+		local cps = ls:FindFirstChild("CPS") :: StringValue?
+		local fmt = require(Shared.Format)
+		if cash then
+			cash.Value = fmt.money(d.cash)
+		end
+		if cps then
+			cps.Value = fmt.money(Session.totalCps(s)) .. "/s"
+		end
+	end
+end
+
+function Session.cooldownReady(s: State, name: string): boolean
+	return os.clock() >= (s.cooldowns[name] or 0)
+end
+
+function Session.setCooldown(s: State, name: string, seconds: number)
+	s.cooldowns[name] = os.clock() + seconds
+end
+
+return Session
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="37">
+        <Properties>
+          <string name="Name">Shop</string>
+          <string name="Source"><![CDATA[-- Sklep: kolejne poziomy ulepszeń, przedmioty i Rebirth.
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Format = require(Shared.Format)
+
+local Session = require(script.Parent.Session)
+local Inventory = require(script.Parent.Inventory)
+local Garage = require(script.Parent.Garage)
+local Net = require(script.Parent.Net)
+
+local Shop = {}
+
+local TRACKS = {
+	Magnet = { field = "magnet", list = Config.Magnets },
+	Rope = { field = "rope", list = Config.Ropes },
+	Transport = { field = "transport", list = Config.Transports },
+	Garage = { field = "garage", list = Config.GarageLevels },
+}
+
+function Shop.rebirthCost(rebirths: number): number
+	return Config.Rebirth.baseCost * Config.Rebirth.costGrowth ^ rebirths
+end
+
+local function pay(s: Session.State, price: number): boolean
+	if s.data.cash < price then
+		return false
+	end
+	s.data.cash -= price
+	return true
+end
+
+function Shop.purchase(player: Player, category: any): (boolean, string)
+	local s = Session.get(player)
+	if not s or type(category) ~= "string" then
+		return false, "Błąd"
+	end
+	local d = s.data
+	local track = TRACKS[category]
+	if track then
+		local level = d[track.field]
+		local nextEntry = track.list[level + 1]
+		if not nextEntry then
+			return false, "Maksymalny poziom"
+		end
+		if not pay(s, nextEntry.price) then
+			return false, "Brakuje " .. Format.money(nextEntry.price - d.cash)
+		end
+		d[track.field] = level + 1
+		if category == "Garage" then
+			Garage.refresh(s)
+		end
+		Inventory.updateSpeed(s)
+		Session.sync(s)
+		return true, "Kupiono!"
+	elseif category == "Banana" then
+		local cfg = Config.Items.BananaPack
+		if not pay(s, cfg.price) then
+			return false, "Brakuje " .. Format.money(cfg.price - d.cash)
+		end
+		d.bananas += cfg.amount
+		Inventory.refreshTools(s)
+		Session.sync(s)
+		return true, "+" .. cfg.amount .. " skórki"
+	elseif category == "Shield" then
+		if d.shield then
+			return false, "Masz już tarczę"
+		end
+		if not pay(s, Config.Items.Shield.price) then
+			return false, "Brakuje " .. Format.money(Config.Items.Shield.price - d.cash)
+		end
+		d.shield = true
+		Inventory.refreshTools(s)
+		Session.sync(s)
+		return true, "Tarcza w ekwipunku!"
+	elseif category == "Rebirth" then
+		local cost = Shop.rebirthCost(d.rebirths)
+		if #s.carried > 0 or s.tug or s.fishing then
+			return false, "Najpierw odnieś łup do garażu"
+		end
+		if not pay(s, cost) then
+			return false, "Rebirth kosztuje " .. Format.money(cost)
+		end
+		d.rebirths += 1
+		d.cash = 0
+		d.pending = 0
+		d.magnet, d.rope, d.transport, d.garage = 1, 1, 1, 1
+		d.racks = {}
+		Garage.refresh(s)
+		Inventory.updateSpeed(s)
+		Session.sync(s)
+		Net.alert({ kind = "rebirth", player = player.DisplayName, rebirths = d.rebirths })
+		return true, "REBIRTH " .. d.rebirths .. "!"
+	end
+	return false, "Nieznany produkt"
+end
+
+return Shop
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="38">
+        <Properties>
+          <string name="Name">Steal</string>
+          <string name="Source"><![CDATA[-- Kradzież: rzut magnesem w niosącego łup gracza rozpoczyna przeciąganie
+-- liny (Tug-of-War). Co takt (0,6 s) obie strony klikają w rytm; serwer
+-- liczy przesunięcie liny z siły magnesu i oceny trafienia w takt.
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Loot = require(Shared.Loot)
+local Geo = require(Shared.Geo)
+
+local Session = require(script.Parent.Session)
+local Models = require(script.Parent.Models)
+local Inventory = require(script.Parent.Inventory)
+local Hazards = require(script.Parent.Hazards)
+local Fishing = require(script.Parent.Fishing)
+local Net = require(script.Parent.Net)
+
+local S = Config.Steal
+local Steal = {}
+
+type Tug = {
+	id: string,
+	attacker: Player,
+	defender: Player,
+	itemUid: string,
+	itemName: string,
+	rarity: number,
+	pos: number,
+	firstBeat: number,
+	judgements: { [Player]: { [number]: number } },
+	beam: Beam?,
+	attachment: Attachment?,
+	over: boolean,
+}
+
+local tugs: { [string]: Tug } = {}
+
+local function now(): number
+	return workspace:GetServerTimeNow()
+end
+
+local function force(s: Session.State): number
+	return math.sqrt(Config.Magnets[s.data.magnet].pull)
+end
+
+local function canBeTargeted(s: Session.State, pos: Vector3): boolean
+	if #s.carried == 0 or s.tug then
+		return false
+	end
+	if Geo.isSafe(pos) or Session.isProtected(s) or Hazards.isShielded(s) then
+		return false
+	end
+	return os.clock() >= s.graceUntil
+end
+
+local function cleanupVisual(t: Tug)
+	if t.beam then
+		t.beam:Destroy()
+	end
+	if t.attachment then
+		t.attachment:Destroy()
+	end
+end
+
+local function endTug(t: Tug, attackerWins: boolean, reason: string)
+	if t.over then
+		return
+	end
+	t.over = true
+	tugs[t.id] = nil
+	cleanupVisual(t)
+
+	local sa = Session.get(t.attacker)
+	local sd = Session.get(t.defender)
+	if sa then
+		sa.tug = nil
+	end
+	if sd then
+		sd.tug = nil
+	end
+
+	local winner, loser = t.defender, t.attacker
+	if attackerWins and sa and sd then
+		winner, loser = t.attacker, t.defender
+		local item = Inventory.remove(sd, t.itemUid)
+		if item then
+			if not Inventory.add(sa, item) then
+				local root = Inventory.rootOf(t.attacker)
+				if root then
+					Hazards.scatter(item, root.Position)
+				end
+			end
+			sd.revenge[t.attacker.UserId] = os.clock() + S.RevengeSeconds
+			Net.notify(t.defender, t.attacker.DisplayName .. " wyrwał ci " .. t.itemName .. "! Zemsta aktywna przez " .. S.RevengeSeconds .. " s", "bad")
+			Net.notify(t.attacker, "Ukradziono: " .. t.itemName .. "! Uciekaj do garażu!", "good")
+			if t.rarity >= Config.RarityIndex.Epic then
+				Net.alert({
+					kind = "steal",
+					rarity = t.rarity,
+					player = t.attacker.DisplayName,
+					victim = t.defender.DisplayName,
+					itemName = t.itemName,
+				})
+			end
+		end
+	else
+		if sa then
+			Session.setCooldown(sa, "steal", S.FailCooldown)
+		end
+		if sd then
+			sd.graceUntil = os.clock() + S.DefenderGrace
+		end
+		Net.notify(t.defender, "Obroniłeś łup!", "good")
+		Net.notify(t.attacker, if reason == "safe" then "Uciekł do garażu!" else "Kradzież nieudana - magnes przegrzany", "bad")
+	end
+
+	-- Przegrany dostaje szarpnięcie w stronę zwycięzcy (czasem prosto do kanału)
+	local wr, lr = Inventory.rootOf(winner), Inventory.rootOf(loser)
+	if wr and lr then
+		local dir = (wr.Position - lr.Position) * Vector3.new(1, 0, 1)
+		if dir.Magnitude > 0.1 then
+			Net.event("Ragdoll"):FireClient(loser, 0.8, dir.Unit * 45 + Vector3.new(0, 30, 0))
+		end
+	end
+
+	for _, p in ipairs({ t.attacker, t.defender }) do
+		local ps = Session.get(p)
+		if ps then
+			Inventory.updateSpeed(ps)
+			Session.sync(ps)
+		end
+		if p.Parent then
+			Net.event("TugEnd"):FireClient(p, { id = t.id, attackerWins = attackerWins, won = p == winner, reason = reason })
+		end
+	end
+end
+
+local function judge(offset: number?): number
+	if offset == nil then
+		return S.MissMult
+	end
+	local a = math.abs(offset)
+	if a <= S.PerfectWindow then
+		return S.PerfectMult
+	elseif a <= S.GoodWindow then
+		return S.GoodMult
+	end
+	return S.MissMult
+end
+
+local function runTug(t: Tug)
+	local sa = Session.get(t.attacker)
+	local sd = Session.get(t.defender)
+	if not sa or not sd then
+		endTug(t, false, "left")
+		return
+	end
+	local fa = force(sa)
+	local fd = force(sd) * S.DefenderBonus
+	local revenge = sa.revenge[t.defender.UserId]
+	if revenge and os.clock() < revenge then
+		fa *= S.RevengeBonus
+	end
+	local top = math.max(fa, fd)
+	fa = math.max(fa / top, S.MinForceRatio)
+	fd = math.max(fd / top, S.MinForceRatio)
+	local range = Config.Ropes[sa.data.rope].pvpRange * S.RopeSnapRangeMult
+
+	for beat = 1, S.MaxBeats do
+		-- Ocena taktu 0,25 s po jego czasie (zapas na ping)
+		local evalAt = t.firstBeat + (beat - 1) * S.BeatInterval + 0.25
+		while now() < evalAt and not t.over do
+			task.wait(0.03)
+			local ar, dr = Inventory.rootOf(t.attacker), Inventory.rootOf(t.defender)
+			if not ar or not dr or not t.attacker.Parent or not t.defender.Parent then
+				endTug(t, false, "left")
+				return
+			end
+			if Geo.isSafe(dr.Position) then
+				endTug(t, false, "safe")
+				return
+			end
+			if (ar.Position - dr.Position).Magnitude > range then
+				endTug(t, false, "snap")
+				return
+			end
+		end
+		if t.over then
+			return
+		end
+		local ja = judge(t.judgements[t.attacker][beat])
+		local jd = judge(t.judgements[t.defender][beat])
+		t.pos += S.ShiftPerBeat * (fa * ja - fd * jd)
+		for _, p in ipairs({ t.attacker, t.defender }) do
+			Net.event("TugUpdate"):FireClient(p, { id = t.id, pos = t.pos, beat = beat, ja = ja, jd = jd })
+		end
+		if t.pos >= S.WinThreshold then
+			endTug(t, true, "pulled")
+			return
+		elseif t.pos <= -S.WinThreshold then
+			endTug(t, false, "held")
+			return
+		end
+	end
+	endTug(t, false, "timeout")
+end
+
+local function startTug(attacker: Player, sa: Session.State, defender: Player, sd: Session.State)
+	local item = Inventory.top(sd) :: Loot.Item
+	local rarity = Loot.rarityOf(item)
+	local t: Tug = {
+		id = HttpService:GenerateGUID(false),
+		attacker = attacker,
+		defender = defender,
+		itemUid = item.uid,
+		itemName = Loot.displayName(item),
+		rarity = Config.RarityIndex[rarity.id],
+		pos = 0,
+		firstBeat = now() + 1.2,
+		judgements = { [attacker] = {}, [defender] = {} },
+		beam = nil,
+		attachment = nil,
+		over = false,
+	}
+	tugs[t.id] = t
+	sa.tug = t
+	sd.tug = t
+	-- Łowiącej ofierze przerywamy minigrę (obiekt wraca na dno)
+	Fishing.cancel(sd)
+	Fishing.cancel(sa)
+	Inventory.updateSpeed(sa)
+	Inventory.updateSpeed(sd)
+
+	-- Czerwona linka od kradnącego do przedmiotu
+	local tool = Inventory.equippedTool(attacker, Inventory.ToolNames.Steal)
+	local handle = tool and tool:FindFirstChild("Handle")
+	local tip = handle and handle:FindFirstChild("Tip") :: Attachment?
+	local model = Inventory.modelOf(sd, item.uid)
+	if tip and model and model.PrimaryPart then
+		local a1 = Instance.new("Attachment")
+		a1.Parent = model.PrimaryPart
+		t.attachment = a1
+		local beam = Models.line(tip, a1, Color3.fromRGB(255, 60, 60))
+		beam.Width0 = 0.25
+		beam.Width1 = 0.25
+		beam.CurveSize0 = 0
+		beam.CurveSize1 = 0
+		t.beam = beam
+	end
+
+	local payload = {
+		id = t.id,
+		itemName = t.itemName,
+		rarity = t.rarity,
+		firstBeat = t.firstBeat,
+		interval = S.BeatInterval,
+		maxBeats = S.MaxBeats,
+		threshold = S.WinThreshold,
+	}
+	payload.role = "attacker"
+	payload.opponent = defender.DisplayName
+	Net.event("TugStart"):FireClient(attacker, table.clone(payload))
+	payload.role = "defender"
+	payload.opponent = attacker.DisplayName
+	Net.event("TugStart"):FireClient(defender, table.clone(payload))
+
+	task.spawn(runTug, t)
+end
+
+function Steal.onRequest(player: Player, aim: any)
+	if typeof(aim) ~= "Vector3" then
+		return
+	end
+	local sa = Session.get(player)
+	local root = Inventory.rootOf(player)
+	if not sa or not root then
+		return
+	end
+	if not Inventory.isEquipped(player, Inventory.ToolNames.Steal) then
+		return
+	end
+	if sa.tug or sa.fishing then
+		return
+	end
+	if not Session.cooldownReady(sa, "steal") then
+		Net.notify(player, "Magnes jeszcze stygnie...", "bad")
+		return
+	end
+	if Session.isProtected(sa) then
+		Net.notify(player, "Masz Ochronę Nowicjusza (L) - nie możesz jeszcze kraść", "bad")
+		return
+	end
+	if Geo.isSafe(root.Position) then
+		Net.notify(player, "W garażu nie można kraść", "bad")
+		return
+	end
+	local range = Config.Ropes[sa.data.rope].pvpRange
+	local best, bestDist = nil, S.AimTolerance
+	for _, other in ipairs(Players:GetPlayers()) do
+		if other ~= player then
+			local so = Session.get(other)
+			local orr = Inventory.rootOf(other)
+			if so and orr and canBeTargeted(so, orr.Position) then
+				local distToAim = (orr.Position - aim).Magnitude
+				local distToMe = (orr.Position - root.Position).Magnitude
+				if distToAim <= bestDist and distToMe <= range then
+					best, bestDist = other, distToAim
+				end
+			end
+		end
+	end
+	if not best then
+		Session.setCooldown(sa, "steal", S.MissCooldown)
+		Net.notify(player, "Pudło! (zasięg liny: " .. range .. " studs)", "info")
+		return
+	end
+	local sd = Session.get(best) :: Session.State
+	startTug(player, sa, best, sd)
+end
+
+function Steal.onTap(player: Player, id: any, beat: any, offset: any)
+	if type(id) ~= "string" or type(beat) ~= "number" or type(offset) ~= "number" then
+		return
+	end
+	local t = tugs[id]
+	if not t or t.over then
+		return
+	end
+	local list = t.judgements[player]
+	if not list then
+		return
+	end
+	beat = math.floor(beat)
+	if beat < 1 or beat > S.MaxBeats or list[beat] ~= nil then
+		return -- liczy się tylko pierwszy klik w danym takcie (spam = pudło)
+	end
+	list[beat] = math.clamp(offset, -1, 1)
+end
+
+function Steal.forceEnd(player: Player)
+	local s = Session.get(player)
+	local t = s and s.tug :: Tug?
+	if t then
+		endTug(t, false, "left")
+	end
+end
+
+return Steal
+]]></string>
+        </Properties>
+      </Item>
+    </Item>
+  </Item>
+  <Item class="SoundService" referent="39">
+    <Properties>
+      <string name="Name">SoundService</string>
+    </Properties>
+  </Item>
+  <Item class="StarterGui" referent="40">
+    <Properties>
+      <string name="Name">StarterGui</string>
+    </Properties>
+  </Item>
+  <Item class="StarterPack" referent="41">
+    <Properties>
+      <string name="Name">StarterPack</string>
+    </Properties>
+  </Item>
+  <Item class="StarterPlayer" referent="42">
+    <Properties>
+      <string name="Name">StarterPlayer</string>
+    </Properties>
+    <Item class="StarterPlayerScripts" referent="43">
+      <Properties>
+        <string name="Name">StarterPlayerScripts</string>
+      </Properties>
+      <Item class="LocalScript" referent="44">
+        <Properties>
+          <string name="Name">GameClient</string>
+          <string name="Source"><![CDATA[-- Magnet & Steal a Brainrot - punkt startowy klienta.
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Format = require(Shared.Format)
+
+local UI = require(script.UI)
+local Effects = require(script.Effects)
+local Minigame = require(script.Minigame)
+local Tug = require(script.Tug)
+local ShopUI = require(script.ShopUI)
+local IndexUI = require(script.IndexUI)
+local Tools = require(script.Tools)
+
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local player = Players.LocalPlayer
+
+local refs = UI.build()
+Effects.start()
+Minigame.init()
+Tug.init()
+ShopUI.init()
+IndexUI.init()
+Tools.init()
+
+refs.shopButton.MouseButton1Click:Connect(ShopUI.toggle)
+refs.indexButton.MouseButton1Click:Connect(IndexUI.toggle)
+refs.devButton.MouseButton1Click:Connect(function()
+	Remotes.DevCheat:FireServer()
+end)
+
+Remotes.Notify.OnClientEvent:Connect(function(text, kind)
+	UI.toast(text, kind)
+end)
+
+Remotes.Ragdoll.OnClientEvent:Connect(function(seconds, impulse)
+	Effects.ragdoll(seconds, impulse)
+end)
+
+local function nearMe(position: Vector3?, radius: number): boolean
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
+	return root ~= nil and position ~= nil and (root.Position - position).Magnitude <= radius
+end
+
+Remotes.Alert.OnClientEvent:Connect(function(data)
+	local kind = data.kind
+	local rarity = Config.Rarities[data.rarity or 1] or Config.Rarities[1]
+	if kind == "catch" then
+		local isMe = data.player == player.DisplayName
+		UI.banner(
+			string.upper(rarity.id) .. " DROP!",
+			data.player .. " wyłowił: " .. data.itemName .. " (strefa " .. tostring(data.zone) .. ")",
+			rarity.color,
+			if rarity.id == "Mythic" then 7 else 5
+		)
+		UI.flash(rarity.color, if isMe then 0.8 else 0.45)
+		Effects.play("Alert", 0.9)
+		Effects.shake(if isMe then 4 else 2, 0.6)
+	elseif kind == "hooked" then
+		UI.banner(
+			"NA HACZYKU: " .. string.upper(rarity.id) .. "!",
+			data.player .. " wyciąga coś ogromnego w strefie " .. tostring(data.zone) .. " - słup światła wskazuje miejsce!",
+			rarity.color,
+			4
+		)
+		Effects.play("Clank", 0.8, 0.8)
+	elseif kind == "steal" then
+		local text = data.player .. " ukradł " .. data.itemName .. " graczowi " .. data.victim .. "!"
+		if rarity.inHands then
+			UI.banner("KRADZIEŻ " .. string.upper(rarity.id) .. "!", text, rarity.color, 4)
+			Effects.play("Steal", 0.9, 0.8)
+		else
+			UI.toast(text, "info")
+		end
+	elseif kind == "sunk" then
+		UI.banner(
+			string.upper(rarity.id) .. " ZATONĄŁ!",
+			data.itemName .. " leży na dnie" .. (if data.player ~= "" then " (wypadł graczowi " .. data.player .. ")" else "") .. ". Kto pierwszy rzuci magnes, ten bierze!",
+			rarity.color,
+			5
+		)
+	elseif kind == "splash" then
+		if nearMe(data.position, 90) then
+			Effects.play("Splash", 0.9)
+		end
+	elseif kind == "slip" then
+		if nearMe(data.position, 70) then
+			Effects.play("Slip", 0.8)
+		end
+	elseif kind == "event" then
+		UI.banner(data.title, data.text, Color3.fromRGB(150, 110, 255), 5)
+		if data.on then
+			UI.flash(Color3.fromRGB(120, 80, 255), 0.5)
+			Effects.play("Alert", 0.7, 0.7)
+		end
+	elseif kind == "rebirth" then
+		UI.toast(data.player .. " zrobił REBIRTH " .. tostring(data.rebirths) .. "!", "good")
+	elseif kind == "collect" then
+		UI.toast("+" .. Format.money(data.amount) .. " z Kasy garażu", "good")
+		Effects.play("Buy", 0.6, 1.2)
+	end
+end)
+
+for _, name in ipairs({ "Cash", "CPS", "Pending", "Carried", "Capacity", "Magnet", "Protected" }) do
+	player:GetAttributeChangedSignal(name):Connect(UI.refreshStats)
+end
+workspace:GetAttributeChangedSignal("Storm"):Connect(UI.refreshStats)
+UI.refreshStats()
+
+task.spawn(function()
+	while true do
+		UI.refreshZone()
+		task.wait(0.25)
+	end
+end)
+
+UI.toast("Weź Wędkę Magnetyczną (1), podejdź do kanału i przytrzymaj klik!", "info")
+]]></string>
+        </Properties>
+        <Item class="ModuleScript" referent="45">
+          <Properties>
+            <string name="Name">Effects</string>
+            <string name="Source"><![CDATA[-- Dźwięki, wstrząsy kamery, tęczowe mutacje i ragdoll (poślizg/szarpnięcie).
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
+local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+
+local player = Players.LocalPlayer
+local Effects = {}
+
+local soundCache: { [string]: Sound } = {}
+
+function Effects.play(name: string, volume: number?, pitch: number?)
+	local id = (Config.Sounds :: any)[name]
+	if not id then
+		return
+	end
+	local sound = soundCache[name]
+	if not sound then
+		sound = Instance.new("Sound")
+		sound.SoundId = id
+		sound.Parent = SoundService
+		soundCache[name] = sound
+	end
+	sound.Volume = volume or 0.6
+	sound.PlaybackSpeed = pitch or 1
+	sound.TimePosition = 0
+	sound:Play()
+end
+
+local shakeUntil, shakePower = 0, 0
+function Effects.shake(power: number, seconds: number)
+	shakePower = math.max(shakePower, power)
+	shakeUntil = math.max(shakeUntil, os.clock() + seconds)
+end
+
+local rainbowParts: { BasePart } = {}
+local function track(inst: Instance)
+	if inst:IsA("BasePart") then
+		table.insert(rainbowParts, inst)
+	end
+end
+
+function Effects.start()
+	for _, inst in ipairs(CollectionService:GetTagged("Rainbow")) do
+		track(inst)
+	end
+	CollectionService:GetInstanceAddedSignal("Rainbow"):Connect(track)
+	CollectionService:GetInstanceRemovedSignal("Rainbow"):Connect(function(inst)
+		local i = table.find(rainbowParts, inst :: any)
+		if i then
+			table.remove(rainbowParts, i)
+		end
+	end)
+
+	-- Po skrypcie kamery, żeby wstrząs nie był nadpisany
+	RunService:BindToRenderStep("MSB_Effects", Enum.RenderPriority.Camera.Value + 1, function()
+		local t = os.clock()
+		local hue = (t * 0.25) % 1
+		for _, p in ipairs(rainbowParts) do
+			p.Color = Color3.fromHSV(hue, 0.8, 1)
+		end
+		if t < shakeUntil then
+			local camera = workspace.CurrentCamera
+			local f = shakePower * ((shakeUntil - t) / 0.5)
+			camera.CFrame *= CFrame.Angles(
+				math.rad((math.random() - 0.5) * f),
+				math.rad((math.random() - 0.5) * f),
+				0
+			)
+		else
+			shakePower = 0
+		end
+	end)
+end
+
+-- Ragdoll po stronie klienta (postać jest własnością klienta fizycznie)
+function Effects.ragdoll(seconds: number, impulse: Vector3)
+	local character = player.Character
+	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+	local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if not humanoid or not root then
+		return
+	end
+	Effects.play("Slip", 0.8)
+	humanoid.PlatformStand = true
+	root.AssemblyLinearVelocity = impulse
+	root.AssemblyAngularVelocity = Vector3.new(math.random(-6, 6), math.random(-3, 3), math.random(-6, 6))
+	task.delay(seconds, function()
+		if humanoid.Parent then
+			humanoid.PlatformStand = false
+			humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+		end
+	end)
+end
+
+return Effects
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="46">
+          <Properties>
+            <string name="Name">IndexUI</string>
+            <string name="Source"><![CDATA[-- Index (kolekcja): 30 Brainrotów, odkryte pokazują nazwę i kolor tieru.
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Brainrots = require(Shared.Brainrots)
+
+local UI = require(script.Parent.UI)
+
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+
+local IndexUI = {}
+
+local frame: Frame
+local cells: { [string]: TextLabel } = {}
+local counter: TextLabel
+local discovered: { [string]: boolean } = {}
+
+function IndexUI.refresh()
+	local found = 0
+	for _, b in ipairs(Brainrots.List) do
+		local cell = cells[b.id]
+		local rarity = Config.Rarities[Config.RarityIndex[b.rarity]]
+		if discovered[b.id] then
+			found += 1
+			cell.Text = b.name
+			cell.TextColor3 = rarity.color
+			cell.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+		else
+			cell.Text = "??? (" .. b.rarity .. ")"
+			cell.TextColor3 = Color3.fromRGB(110, 110, 120)
+			cell.BackgroundColor3 = Color3.fromRGB(30, 30, 36)
+		end
+	end
+	counter.Text = ("Odkryto %d / %d"):format(found, #Brainrots.List)
+end
+
+function IndexUI.toggle()
+	frame.Visible = not frame.Visible
+	IndexUI.refresh()
+end
+
+function IndexUI.init()
+	frame = UI.make("Frame", {
+		Name = "Index",
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.5),
+		Size = UDim2.new(0, 720, 0, 460),
+		BackgroundColor3 = Color3.fromRGB(22, 20, 32),
+		Visible = false,
+		ZIndex = 40,
+		Parent = UI.root(),
+	}, { UI.corner(16), UI.stroke(3, Color3.fromRGB(140, 110, 255)) })
+	UI.label({
+		Position = UDim2.new(0, 16, 0, 8),
+		Size = UDim2.new(0.5, 0, 0, 36),
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Text = "BRAINROT INDEX",
+		TextColor3 = Color3.fromRGB(170, 140, 255),
+		ZIndex = 41,
+		Parent = frame,
+	})
+	counter = UI.label({
+		Position = UDim2.new(0.5, 0, 0, 12),
+		Size = UDim2.new(0.5, -70, 0, 28),
+		Text = "",
+		ZIndex = 41,
+		Parent = frame,
+	})
+	local closeButton = UI.button("X", Color3.fromRGB(200, 60, 60), {
+		Position = UDim2.new(1, -54, 0, 8),
+		Size = UDim2.new(0, 44, 0, 36),
+		ZIndex = 41,
+		Parent = frame,
+	})
+	closeButton.MouseButton1Click:Connect(function()
+		frame.Visible = false
+	end)
+
+	-- Siatka: kolumna = strefa, wiersz = rzadkość
+	local grid = UI.make("Frame", {
+		Position = UDim2.new(0, 12, 0, 52),
+		Size = UDim2.new(1, -24, 1, -64),
+		BackgroundTransparency = 1,
+		ZIndex = 41,
+		Parent = frame,
+	})
+	local zones = #Config.Zones
+	local rarities = #Config.Rarities
+	for z = 1, zones do
+		UI.label({
+			Position = UDim2.new((z - 1) / zones, 2, 0, 0),
+			Size = UDim2.new(1 / zones, -4, 0, 24),
+			Text = z .. ". " .. Config.Zones[z].name,
+			TextColor3 = Config.Zones[z].color,
+			ZIndex = 42,
+			Parent = grid,
+		})
+	end
+	for _, b in ipairs(Brainrots.List) do
+		local r = Config.RarityIndex[b.rarity]
+		local cell = UI.label({
+			Position = UDim2.new((b.zone - 1) / zones, 3, 0, 28 + (r - 1) * 60),
+			Size = UDim2.new(1 / zones, -6, 0, 54),
+			BackgroundTransparency = 0,
+			TextStrokeTransparency = 0.6,
+			ZIndex = 42,
+			Text = "",
+			Parent = grid,
+		})
+		UI.corner(8).Parent = cell
+		UI.make("UIPadding", { PaddingLeft = UDim.new(0, 4), PaddingRight = UDim.new(0, 4), Parent = cell })
+		cells[b.id] = cell
+	end
+	assert(rarities == 6, "Siatka Indexu zakłada 6 rzadkości")
+
+	Remotes.IndexUpdate.OnClientEvent:Connect(function(index)
+		if type(index) == "table" then
+			discovered = index
+			IndexUI.refresh()
+		end
+	end)
+	IndexUI.refresh()
+end
+
+return IndexUI
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="47">
+          <Properties>
+            <string name="Name">Minigame</string>
+            <string name="Source"><![CDATA[-- Minigra łowienia: opadanie magnesu -> "KLANG!" (Hook Check) -> wyciąganie.
+-- Wyciąganie: trzymaj obiekt w polu magnetycznym, pilnuj napięcia liny
+-- (sweet spot 40-70% daje +25% postępu, 100% = zerwana lina) i trafiaj
+-- skill-checki przy szarpnięciach.
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local ContextActionService = game:GetService("ContextActionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+
+local UI = require(script.Parent.UI)
+local Effects = require(script.Parent.Effects)
+
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local player = Players.LocalPlayer
+
+local F = Config.Fishing
+local BAR_W = 480
+local QTE_POINTS = {
+	[1] = { 0.6 },
+	[2] = { 0.45, 0.75 },
+	[3] = { 0.4, 0.6, 0.8 },
+}
+
+local Minigame = {}
+
+local active: any = nil -- stan bieżącej minigry
+local gui: { [string]: any } = {}
+
+local function build()
+	local root = UI.root()
+	gui.catcher = UI.make("TextButton", {
+		Name = "HoldCatcher",
+		Size = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+		Text = "",
+		AutoButtonColor = false,
+		Visible = false,
+		ZIndex = 20,
+		Parent = UI.overlay(),
+	})
+	gui.panel = UI.make("Frame", {
+		Name = "Minigame",
+		AnchorPoint = Vector2.new(0.5, 1),
+		Position = UDim2.new(0.5, 0, 1, -110),
+		Size = UDim2.new(0, BAR_W + 40, 0, 210),
+		BackgroundColor3 = Color3.fromRGB(18, 22, 30),
+		BackgroundTransparency = 0.1,
+		Visible = false,
+		ZIndex = 21,
+		Parent = root,
+	}, { UI.corner(14) })
+	gui.panelStroke = UI.stroke(3, Color3.new(1, 1, 1))
+	gui.panelStroke.Parent = gui.panel
+
+	gui.title = UI.label({
+		Position = UDim2.new(0, 20, 0, 6),
+		Size = UDim2.new(1, -40, 0, 32),
+		ZIndex = 22,
+		Text = "",
+		Parent = gui.panel,
+	})
+	gui.bar = UI.make("Frame", {
+		Position = UDim2.new(0, 20, 0, 44),
+		Size = UDim2.new(0, BAR_W, 0, 46),
+		BackgroundColor3 = Color3.fromRGB(40, 60, 50),
+		ZIndex = 22,
+		Parent = gui.panel,
+	}, { UI.corner(8), UI.stroke(2) })
+	gui.field = UI.make("Frame", {
+		Size = UDim2.new(0.25, 0, 1, 0),
+		BackgroundColor3 = Color3.fromRGB(90, 230, 120),
+		BackgroundTransparency = 0.35,
+		ZIndex = 23,
+		Parent = gui.bar,
+	}, { UI.corner(8) })
+	gui.object = UI.label({
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.new(0.5, 0, 0.5, 0),
+		Size = UDim2.new(0, 34, 0, 34),
+		BackgroundTransparency = 0,
+		BackgroundColor3 = Color3.new(1, 1, 1),
+		Text = "?",
+		TextColor3 = Color3.new(0, 0, 0),
+		TextStrokeTransparency = 1,
+		ZIndex = 24,
+		Parent = gui.bar,
+	})
+	UI.corner(17).Parent = gui.object
+
+	local function meter(y: number, label: string): (Frame, Frame)
+		UI.label({
+			Position = UDim2.new(0, 20, 0, y),
+			Size = UDim2.new(0, 90, 0, 18),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			ZIndex = 22,
+			Text = label,
+			Parent = gui.panel,
+		})
+		local back = UI.make("Frame", {
+			Position = UDim2.new(0, 115, 0, y + 2),
+			Size = UDim2.new(0, BAR_W - 95, 0, 14),
+			BackgroundColor3 = Color3.fromRGB(35, 35, 40),
+			ZIndex = 22,
+			Parent = gui.panel,
+		}, { UI.corner(6) })
+		local fill = UI.make("Frame", {
+			Size = UDim2.new(0, 0, 1, 0),
+			BackgroundColor3 = Color3.fromRGB(90, 230, 120),
+			ZIndex = 24,
+			Parent = back,
+		}, { UI.corner(6) })
+		return back, fill
+	end
+	local _, progressFill = meter(100, "Postęp")
+	gui.progress = progressFill
+	local tensionBack, tensionFill = meter(124, "Napięcie")
+	gui.tension = tensionFill
+	UI.make("Frame", {
+		Position = UDim2.new(F.SweetSpotMin, 0, 0, 0),
+		Size = UDim2.new(F.SweetSpotMax - F.SweetSpotMin, 0, 1, 0),
+		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+		BackgroundTransparency = 0.75,
+		ZIndex = 23,
+		Parent = tensionBack,
+	})
+
+	gui.hint = UI.label({
+		Position = UDim2.new(0, 20, 0, 146),
+		Size = UDim2.new(1, -40, 0, 22),
+		ZIndex = 22,
+		TextColor3 = Color3.fromRGB(200, 200, 210),
+		Text = "",
+		Parent = gui.panel,
+	})
+	gui.status = UI.label({
+		Position = UDim2.new(0, 20, 0, 172),
+		Size = UDim2.new(1, -40, 0, 28),
+		ZIndex = 22,
+		Text = "",
+		Parent = gui.panel,
+	})
+
+	-- Skill-check (szarpnięcie)
+	gui.qte = UI.make("Frame", {
+		AnchorPoint = Vector2.new(0.5, 1),
+		Position = UDim2.new(0.5, 0, 0, -12),
+		Size = UDim2.new(0, 380, 0, 34),
+		BackgroundColor3 = Color3.fromRGB(30, 30, 35),
+		Visible = false,
+		ZIndex = 25,
+		Parent = gui.panel,
+	}, { UI.corner(8), UI.stroke(3, Color3.fromRGB(255, 200, 60)) })
+	gui.qteGood = UI.make("Frame", {
+		BackgroundColor3 = Color3.fromRGB(240, 200, 60),
+		ZIndex = 26,
+		Parent = gui.qte,
+	})
+	gui.qtePerfect = UI.make("Frame", {
+		BackgroundColor3 = Color3.fromRGB(80, 230, 100),
+		ZIndex = 27,
+		Parent = gui.qte,
+	})
+	gui.qteNeedle = UI.make("Frame", {
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.new(0, 0, 0.5, 0),
+		Size = UDim2.new(0, 6, 1.3, 0),
+		BackgroundColor3 = Color3.new(1, 1, 1),
+		ZIndex = 28,
+		Parent = gui.qte,
+	})
+	UI.label({
+		Position = UDim2.new(0, 0, -1, -2),
+		Size = UDim2.new(1, 0, 1, 0),
+		ZIndex = 26,
+		Text = "SZARPNIĘCIE! Kliknij na zielonym!",
+		TextColor3 = Color3.fromRGB(255, 220, 80),
+		Parent = gui.qte,
+	})
+end
+
+local function setVisible(on: boolean)
+	gui.panel.Visible = on
+	gui.catcher.Visible = on
+	if not on then
+		gui.qte.Visible = false
+	end
+end
+
+local function close()
+	if active and active.conn then
+		active.conn:Disconnect()
+	end
+	active = nil
+	setVisible(false)
+	ContextActionService:UnbindAction("MSB_Reel")
+end
+
+local function send(success: boolean, reason: string?)
+	if not active or active.sent then
+		return
+	end
+	active.sent = true
+	Remotes.FishResult:FireServer(active.token, success, reason)
+end
+
+local function finish(success: boolean, reason: string?)
+	if not active or active.done then
+		return
+	end
+	active.done = true
+	send(success, reason)
+	local rarity = Config.Rarities[active.params.rarity]
+	if success then
+		gui.status.Text = "WYŁOWIONE!"
+		gui.status.TextColor3 = rarity.color
+		Effects.play("Catch", 0.8)
+		if active.params.rarity >= 3 then
+			UI.flash(rarity.color, 0.5)
+		end
+	else
+		gui.status.Text = if reason == "snap" then "LINA PĘKŁA!" elseif reason == "hook" then "Za późno! Magnes się odczepił" else "Uciekło..."
+		gui.status.TextColor3 = Color3.fromRGB(255, 100, 100)
+		Effects.play("Snap", 0.7)
+	end
+	local me = active
+	task.delay(1.2, function()
+		if active == me then
+			close()
+		end
+	end)
+end
+
+local function startQte()
+	local a = active
+	local rarity = Config.Rarities[a.params.rarity]
+	a.qte = {
+		t = 0,
+		duration = 1.1,
+		center = 0.3 + math.random() * 0.55,
+		perfect = rarity.perfect,
+		good = rarity.good,
+	}
+	gui.qtePerfect.Size = UDim2.new(rarity.perfect, 0, 1, 0)
+	gui.qtePerfect.Position = UDim2.new(a.qte.center - rarity.perfect / 2, 0, 0, 0)
+	gui.qteGood.Size = UDim2.new(rarity.good, 0, 1, 0)
+	gui.qteGood.Position = UDim2.new(a.qte.center - rarity.good / 2, 0, 0, 0)
+	gui.qte.Visible = true
+	a.holding = false
+	Effects.play("Clank", 0.5, 1.3)
+	Effects.shake(1.5, 0.3)
+end
+
+local function resolveQte(pressed: boolean)
+	local a = active
+	local q = a.qte
+	local dist = math.abs(q.t / q.duration - q.center)
+	local result
+	if pressed and dist <= q.perfect / 2 then
+		result = "PERFECT!"
+		a.progress = math.min(1, a.progress + 0.10)
+		a.tension = math.max(0, a.tension - 0.20)
+	elseif pressed and dist <= q.good / 2 then
+		result = "Dobrze"
+		a.progress = math.min(1, a.progress + 0.03)
+	else
+		result = "Pudło!"
+		a.progress -= 0.15
+		a.tension += 0.25 * a.tMult
+	end
+	gui.status.Text = result
+	gui.status.TextColor3 = if result == "Pudło!" then Color3.fromRGB(255, 110, 110) else Color3.fromRGB(120, 255, 140)
+	a.qte = nil
+	gui.qte.Visible = false
+end
+
+local function press()
+	local a = active
+	if not a or a.done then
+		return
+	end
+	if a.phase == "bite" then
+		a.phase = "reel"
+		gui.status.Text = ""
+		gui.hint.Text = "Trzymaj = pole w prawo · puść = w lewo · pilnuj napięcia!"
+		return
+	end
+	if a.phase ~= "reel" then
+		return
+	end
+	if a.qte then
+		resolveQte(true)
+		return
+	end
+	a.holding = true
+end
+
+local function release()
+	if active then
+		active.holding = false
+	end
+end
+
+local function step(dt: number)
+	local a = active
+	if not a or a.done then
+		return
+	end
+	local params = a.params
+	local rarity = Config.Rarities[params.rarity]
+	a.elapsed += dt
+
+	if a.phase == "wait" then
+		gui.status.Text = "Magnes opada" .. string.rep(".", 1 + math.floor(a.elapsed * 3) % 3)
+		if a.elapsed >= params.biteDelay then
+			Effects.play("Clank", 1)
+			Effects.shake(2.5, 0.35)
+			gui.object.BackgroundColor3 = rarity.color
+			if params.tooHeavy then
+				a.phase = "tease"
+				gui.title.Text = "KLANG! Coś ogromnego..."
+				gui.title.TextColor3 = rarity.color
+				gui.status.Text = (params.teaseName or "???") .. " · " .. params.weight .. " kg"
+				gui.status.TextColor3 = rarity.color
+				gui.hint.Text = "Za słaby magnes: potrzebujesz " .. params.needPull .. " kg siły (masz " .. params.pull .. " kg)"
+				a.done = true
+				task.delay(2.5, function()
+					if active == a then
+						close()
+					end
+				end)
+				return
+			end
+			a.phase = "bite"
+			a.biteAt = a.elapsed
+			gui.status.Text = "KLANG! KLIKNIJ TERAZ!"
+			gui.status.TextColor3 = Color3.fromRGB(255, 220, 60)
+			if params.rarity >= 3 then
+				UI.flash(rarity.color, 0.35)
+			end
+		end
+		return
+	elseif a.phase == "bite" then
+		if a.elapsed - a.biteAt > params.hookWindow + 0.15 then
+			finish(false, "hook")
+		end
+		return
+	elseif a.phase ~= "reel" then
+		return
+	end
+
+	-- Skill-check wstrzymuje resztę minigry
+	if a.qte then
+		a.qte.t += dt
+		gui.qteNeedle.Position = UDim2.new(math.clamp(a.qte.t / a.qte.duration, 0, 1), 0, 0.5, 0)
+		if a.qte.t >= a.qte.duration then
+			resolveQte(false)
+		end
+		return
+	end
+
+	-- Klątwa: okresowo odwrócone sterowanie
+	if params.rarity == Config.RarityIndex.Cursed then
+		a.curseTimer -= dt
+		if a.curseTimer <= 0 then
+			a.reversed = not a.reversed
+			a.curseTimer = if a.reversed then 1.5 else 3 + math.random() * 2
+			gui.hint.Text = if a.reversed then "KLĄTWA! ODWRÓCONE STEROWANIE!" else "Trzymaj = pole w prawo · puść = w lewo"
+		end
+	end
+
+	-- Pole magnetyczne gracza
+	local push = a.holding
+	if a.reversed then
+		push = not push
+	end
+	a.v = math.clamp(a.v + (if push then F.FieldAccel else -F.FieldAccel) * dt, -F.FieldMaxSpeed, F.FieldMaxSpeed)
+	a.fieldPos += a.v * dt
+	if a.fieldPos < 0 then
+		a.fieldPos = 0
+		a.v = -a.v * 0.3
+	elseif a.fieldPos > 1 - a.fieldW then
+		a.fieldPos = 1 - a.fieldW
+		a.v = -a.v * 0.3
+	end
+
+	-- Obiekt ucieka do losowych celów, czasem z "dashem"
+	a.retarget -= dt
+	if a.retarget <= 0 then
+		a.target = 0.05 + math.random() * 0.9
+		a.retarget = rarity.retarget * (0.6 + math.random() * 0.8)
+		a.dash = math.random() < 0.25
+	end
+	local speed = rarity.speed * (if a.dash then 2 else 1)
+	local diff = a.target - a.objPos
+	a.objPos += math.sign(diff) * math.min(math.abs(diff), speed * dt)
+
+	local inside = a.objPos >= a.fieldPos and a.objPos <= a.fieldPos + a.fieldW
+
+	if a.holding then
+		a.tension += (if inside then F.TensionHoldInside else F.TensionHoldOutside) * a.tMult * dt
+	else
+		a.tension -= F.TensionRelease * dt
+	end
+	a.tension = math.clamp(a.tension, 0, 1)
+	if a.tension >= 1 then
+		finish(false, "snap")
+		return
+	end
+
+	local sweet = a.tension >= F.SweetSpotMin and a.tension <= F.SweetSpotMax
+	if inside then
+		a.progress += a.gain * dt * (if sweet then F.SweetSpotBonus else 1)
+	else
+		a.progress -= a.drain * dt
+	end
+
+	if a.progress >= 1 then
+		a.progress = 1
+		finish(true)
+	elseif a.progress <= 0 then
+		a.progress = 0
+		finish(false, "escaped")
+	elseif a.nextQte <= #a.qtePoints and a.progress >= a.qtePoints[a.nextQte] then
+		a.nextQte += 1
+		startQte()
+	end
+
+	-- Rysowanie
+	gui.field.Size = UDim2.new(a.fieldW, 0, 1, 0)
+	gui.field.Position = UDim2.new(a.fieldPos, 0, 0, 0)
+	gui.field.BackgroundColor3 = if inside then Color3.fromRGB(90, 230, 120) else Color3.fromRGB(200, 200, 200)
+	gui.object.Position = UDim2.new(a.objPos, 0, 0.5, 0)
+	gui.progress.Size = UDim2.new(a.progress, 0, 1, 0)
+	gui.tension.Size = UDim2.new(a.tension, 0, 1, 0)
+	gui.tension.BackgroundColor3 = if a.tension > 0.85
+		then Color3.fromRGB(255, 70, 70)
+		elseif sweet then Color3.fromRGB(90, 230, 120)
+		else Color3.fromRGB(240, 200, 60)
+end
+
+function Minigame.isActive(): boolean
+	return active ~= nil
+end
+
+function Minigame.start(params: { [string]: any })
+	if params.cancel then
+		if active then
+			gui.status.Text = "Przerwano!"
+			gui.status.TextColor3 = Color3.fromRGB(255, 100, 100)
+			active.done = true
+			active.sent = true
+			local me = active
+			task.delay(1, function()
+				if active == me then
+					close()
+				end
+			end)
+		end
+		return
+	end
+	if active then
+		close()
+	end
+	local rarity = Config.Rarities[params.rarity]
+	local gainRatio = math.clamp(math.sqrt(params.pull / math.max(params.weight, 1)), 0.6, 1.6)
+	active = {
+		token = params.token,
+		params = params,
+		phase = "wait",
+		elapsed = 0,
+		biteAt = 0,
+		holding = false,
+		reversed = false,
+		curseTimer = 2,
+		v = 0,
+		fieldW = if params.rarity == 1 and (player:GetAttribute("Magnet") or 1) == 1 then 0.32 else params.field,
+		fieldPos = 0.35,
+		objPos = 0.5,
+		target = 0.5,
+		retarget = 0.5,
+		dash = false,
+		progress = F.StartProgress,
+		tension = F.TensionStart,
+		gain = F.BaseGain * gainRatio * params.reel,
+		drain = F.BaseDrain * rarity.drain,
+		tMult = (100 / params.durability) * (if params.weight > params.pull then 1.2 else 1),
+		qtePoints = QTE_POINTS[rarity.qte] or {},
+		nextQte = 1,
+		qte = nil,
+		done = false,
+		sent = false,
+		conn = nil,
+	}
+	gui.title.Text = "Wyciąganie: ??? " .. (if params.perfectCast then "· PERFECT CAST!" else "")
+	gui.title.TextColor3 = Color3.new(1, 1, 1)
+	gui.panelStroke.Color = Color3.new(1, 1, 1)
+	gui.object.BackgroundColor3 = Color3.fromRGB(120, 120, 120)
+	gui.status.Text = ""
+	gui.hint.Text = "Czekaj na KLANG!, potem kliknij / dotknij"
+	gui.progress.Size = UDim2.new(active.progress, 0, 1, 0)
+	gui.tension.Size = UDim2.new(active.tension, 0, 1, 0)
+	setVisible(true)
+	Effects.play("Cast", 0.6)
+
+	ContextActionService:BindActionAtPriority("MSB_Reel", function(_, state)
+		if state == Enum.UserInputState.Begin then
+			press()
+		elseif state == Enum.UserInputState.End then
+			release()
+		end
+		return Enum.ContextActionResult.Sink
+	end, false, Enum.ContextActionPriority.High.Value, Enum.KeyCode.Space, Enum.KeyCode.ButtonA, Enum.KeyCode.ButtonR2)
+
+	active.conn = RunService.RenderStepped:Connect(step)
+	-- Tytuł z kolorem tieru pojawia się dopiero po zaczepieniu
+	task.delay(params.biteDelay, function()
+		if active and active.token == params.token and not params.tooHeavy then
+			gui.title.Text = "Wyciąganie: " .. string.upper(rarity.id) .. (if params.perfectCast then " · PERFECT CAST!" else "")
+			gui.title.TextColor3 = rarity.color
+			gui.panelStroke.Color = rarity.color
+		end
+	end)
+end
+
+function Minigame.init()
+	build()
+	gui.catcher.MouseButton1Down:Connect(press)
+	gui.catcher.MouseButton1Up:Connect(release)
+	UserInputService.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			release()
+		end
+	end)
+	Remotes.FishStart.OnClientEvent:Connect(Minigame.start)
+end
+
+return Minigame
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="48">
+          <Properties>
+            <string name="Name">ShopUI</string>
+            <string name="Source"><![CDATA[-- Sklep: magnesy, liny, transport, garaż, przedmioty, Rebirth.
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Format = require(Shared.Format)
+
+local UI = require(script.Parent.UI)
+local Effects = require(script.Parent.Effects)
+
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local player = Players.LocalPlayer
+
+local ShopUI = {}
+
+local frame: Frame
+local rows: { [string]: { title: TextLabel, desc: TextLabel, button: TextButton } } = {}
+
+local function attr(name: string, default: any): any
+	local v = player:GetAttribute(name)
+	if v == nil then
+		return default
+	end
+	return v
+end
+
+local function rebirthCost(r: number): number
+	return Config.Rebirth.baseCost * Config.Rebirth.costGrowth ^ r
+end
+
+-- Opis aktualnego i następnego poziomu dla każdej ścieżki
+local function describe(category: string): (string, string, number?)
+	if category == "Magnet" then
+		local lvl = attr("Magnet", 1)
+		local cur, nxt = Config.Magnets[lvl], Config.Magnets[lvl + 1]
+		local desc = ("Teraz: %s · %d kg · zasięg %d m · luck +%d%%"):format(cur.name, cur.pull, cur.reach, math.floor(cur.luck * 100))
+		if not nxt then
+			return "Magnes (MAX)", desc, nil
+		end
+		return "Magnes → " .. nxt.name, desc .. ("\nNastępny: %d kg · zasięg %d m · pole %d%% · CD %.1f s"):format(nxt.pull, nxt.reach, math.floor(nxt.field * 100), nxt.cooldown), nxt.price
+	elseif category == "Rope" then
+		local lvl = attr("Rope", 1)
+		local cur, nxt = Config.Ropes[lvl], Config.Ropes[lvl + 1]
+		local desc = ("Teraz: %s · wytrzymałość %d · zasięg kradzieży %d"):format(cur.name, cur.durability, cur.pvpRange)
+		if not nxt then
+			return "Lina (MAX)", desc, nil
+		end
+		return "Lina → " .. nxt.name, desc .. ("\nNastępna: wytrzymałość %d · nawijanie x%.2f · zasięg %d"):format(nxt.durability, nxt.reel, nxt.pvpRange), nxt.price
+	elseif category == "Transport" then
+		local lvl = attr("Transport", 1)
+		local cur, nxt = Config.Transports[lvl], Config.Transports[lvl + 1]
+		local desc = ("Teraz: %s · %d szt."):format(cur.name, cur.capacity)
+		if not nxt then
+			return "Transport (MAX)", desc, nil
+		end
+		return "Transport → " .. nxt.name, desc .. ("\nNastępny: %d szt. naraz"):format(nxt.capacity), nxt.price
+	elseif category == "Garage" then
+		local lvl = attr("Garage", 1)
+		local cur, nxt = Config.GarageLevels[lvl], Config.GarageLevels[lvl + 1]
+		local desc = ("Teraz: %d stojaków"):format(cur.slots)
+		if not nxt then
+			return "Garaż (MAX)", desc, nil
+		end
+		return "Rozbudowa garażu → " .. nxt.slots .. " stojaków", desc, nxt.price
+	elseif category == "Banana" then
+		local cfg = Config.Items.BananaPack
+		return cfg.name, "Pułapka: kto wejdzie, ten leży 1,5 s i gubi łup. Masz: " .. attr("Bananas", 0), cfg.price
+	elseif category == "Shield" then
+		local cfg = Config.Items.Shield
+		if attr("HasShield", false) then
+			return cfg.name .. " (KUPIONA)", "Odporność na kradzież przez " .. cfg.duration .. " s, CD " .. cfg.cooldown .. " s", nil
+		end
+		return cfg.name, "Odporność na kradzież przez " .. cfg.duration .. " s, CD " .. cfg.cooldown .. " s", cfg.price
+	elseif category == "Rebirth" then
+		local r = attr("Rebirths", 0)
+		return "REBIRTH " .. (r + 1),
+			("Reset postępu za +%d%% CPS i +%d%% Luck na zawsze. Masz %d Rebirth."):format(
+				math.floor(Config.Rebirth.cpsBonus * 100),
+				math.floor(Config.Rebirth.luckBonus * 100),
+				r
+			),
+			rebirthCost(r)
+	end
+	return category, "", nil
+end
+
+local ORDER = { "Magnet", "Rope", "Transport", "Garage", "Banana", "Shield", "Rebirth" }
+
+function ShopUI.refresh()
+	if not frame or not frame.Visible then
+		return
+	end
+	local cash = attr("Cash", 0)
+	for _, category in ipairs(ORDER) do
+		local row = rows[category]
+		local title, desc, price = describe(category)
+		row.title.Text = title
+		row.desc.Text = desc
+		if price then
+			row.button.Text = Format.money(price)
+			row.button.BackgroundColor3 = if cash >= price then Color3.fromRGB(50, 180, 80) else Color3.fromRGB(110, 110, 115)
+			row.button.Active = true
+		else
+			row.button.Text = "—"
+			row.button.BackgroundColor3 = Color3.fromRGB(70, 70, 75)
+			row.button.Active = false
+		end
+	end
+end
+
+function ShopUI.toggle()
+	frame.Visible = not frame.Visible
+	ShopUI.refresh()
+end
+
+function ShopUI.init()
+	frame = UI.make("Frame", {
+		Name = "Shop",
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.5),
+		Size = UDim2.new(0, 640, 0, 520),
+		BackgroundColor3 = Color3.fromRGB(25, 25, 32),
+		Visible = false,
+		ZIndex = 40,
+		Parent = UI.root(),
+	}, { UI.corner(16), UI.stroke(3, Color3.fromRGB(255, 170, 30)) })
+	UI.make("UISizeConstraint", { MaxSize = Vector2.new(640, 520), Parent = frame })
+	UI.label({
+		Position = UDim2.new(0, 16, 0, 8),
+		Size = UDim2.new(1, -80, 0, 40),
+		Text = "SKLEP ZŁOMIARZA",
+		TextColor3 = Color3.fromRGB(255, 190, 60),
+		ZIndex = 41,
+		Parent = frame,
+	})
+	local closeButton = UI.button("X", Color3.fromRGB(200, 60, 60), {
+		Position = UDim2.new(1, -54, 0, 8),
+		Size = UDim2.new(0, 44, 0, 40),
+		ZIndex = 41,
+		Parent = frame,
+	})
+	closeButton.MouseButton1Click:Connect(function()
+		frame.Visible = false
+	end)
+
+	local list = UI.make("ScrollingFrame", {
+		Position = UDim2.new(0, 12, 0, 56),
+		Size = UDim2.new(1, -24, 1, -68),
+		BackgroundTransparency = 1,
+		ScrollBarThickness = 8,
+		CanvasSize = UDim2.new(0, 0, 0, 0),
+		AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		ZIndex = 41,
+		Parent = frame,
+	})
+	UI.make("UIListLayout", { Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder, Parent = list })
+
+	for i, category in ipairs(ORDER) do
+		local row = UI.make("Frame", {
+			LayoutOrder = i,
+			Size = UDim2.new(1, -10, 0, 74),
+			BackgroundColor3 = Color3.fromRGB(40, 40, 50),
+			ZIndex = 42,
+			Parent = list,
+		}, { UI.corner(10) })
+		local title = UI.label({
+			Position = UDim2.new(0, 10, 0, 4),
+			Size = UDim2.new(1, -150, 0, 28),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			ZIndex = 43,
+			Text = category,
+			Parent = row,
+		})
+		local desc = UI.label({
+			Position = UDim2.new(0, 10, 0, 32),
+			Size = UDim2.new(1, -150, 0, 38),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextYAlignment = Enum.TextYAlignment.Top,
+			TextColor3 = Color3.fromRGB(200, 200, 210),
+			TextStrokeTransparency = 1,
+			ZIndex = 43,
+			Text = "",
+			Parent = row,
+		})
+		local button = UI.button("$", Color3.fromRGB(50, 180, 80), {
+			AnchorPoint = Vector2.new(1, 0.5),
+			Position = UDim2.new(1, -10, 0.5, 0),
+			Size = UDim2.new(0, 125, 0, 50),
+			ZIndex = 43,
+			Parent = row,
+		})
+		button.MouseButton1Click:Connect(function()
+			local ok, msg = Remotes.Purchase:InvokeServer(category)
+			UI.toast(msg, if ok then "good" else "bad")
+			if ok then
+				Effects.play("Buy", 0.7)
+			end
+			ShopUI.refresh()
+		end)
+		rows[category] = { title = title, desc = desc, button = button }
+	end
+
+	for _, name in ipairs({ "Cash", "Magnet", "Rope", "Transport", "Garage", "Bananas", "HasShield", "Rebirths" }) do
+		player:GetAttributeChangedSignal(name):Connect(ShopUI.refresh)
+	end
+end
+
+return ShopUI
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="49">
+          <Properties>
+            <string name="Name">Tools</string>
+            <string name="Source"><![CDATA[-- Obsługa narzędzi: wędka (ładowanie rzutu), hak do kradzieży, banan, tarcza.
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local UI = require(script.Parent.UI)
+local Effects = require(script.Parent.Effects)
+local Minigame = require(script.Parent.Minigame)
+local Tug = require(script.Parent.Tug)
+
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+
+local Tools = {}
+
+local bound: { [Tool]: boolean } = setmetatable({}, { __mode = "k" }) :: any
+local charging = false
+local chargeStart = 0
+
+local CHARGE_PERIOD = 1.2
+
+local function chargePower(): number
+	-- Ping-pong 0 -> 1 -> 0
+	local t = ((os.clock() - chargeStart) / CHARGE_PERIOD) % 2
+	return if t <= 1 then t else 2 - t
+end
+
+local function busy(): boolean
+	return Minigame.isActive() or Tug.isActive()
+end
+
+local function bindFishing(tool: Tool)
+	tool.Activated:Connect(function()
+		if busy() or charging then
+			return
+		end
+		charging = true
+		chargeStart = os.clock()
+		UI.refs().charge.Visible = true
+	end)
+	local function releaseCast()
+		if not charging then
+			return
+		end
+		charging = false
+		UI.refs().charge.Visible = false
+		Remotes.CastRequest:FireServer(chargePower())
+	end
+	tool.Deactivated:Connect(releaseCast)
+	tool.Unequipped:Connect(function()
+		charging = false
+		UI.refs().charge.Visible = false
+	end)
+end
+
+local function bindSteal(tool: Tool)
+	tool.Activated:Connect(function()
+		if busy() then
+			return
+		end
+		Effects.play("Steal", 0.5, 1.2)
+		Remotes.StealRequest:FireServer(mouse.Hit.Position)
+	end)
+end
+
+local function bindTool(tool: Instance)
+	if not tool:IsA("Tool") or bound[tool] then
+		return
+	end
+	bound[tool] = true
+	if tool.Name == "Wędka Magnetyczna" then
+		bindFishing(tool)
+	elseif tool.Name == "Hak do Kradzieży" then
+		bindSteal(tool)
+	elseif tool.Name == "Skórka od Banana" then
+		tool.Activated:Connect(function()
+			Remotes.PlaceBanana:FireServer()
+		end)
+	elseif tool.Name == "Tarcza Magnesowa" then
+		tool.Activated:Connect(function()
+			Remotes.UseShield:FireServer()
+		end)
+	end
+end
+
+local function watch(container: Instance)
+	for _, child in ipairs(container:GetChildren()) do
+		bindTool(child)
+	end
+	container.ChildAdded:Connect(bindTool)
+end
+
+function Tools.init()
+	watch(player:WaitForChild("Backpack"))
+	player.CharacterAdded:Connect(function(character)
+		watch(character)
+		watch(player:WaitForChild("Backpack"))
+	end)
+	if player.Character then
+		watch(player.Character)
+	end
+
+	RunService.RenderStepped:Connect(function()
+		if charging then
+			UI.refs().chargeNeedle.Position = UDim2.new(chargePower(), 0, 0.5, 0)
+		end
+	end)
+end
+
+return Tools
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="50">
+          <Properties>
+            <string name="Name">Tug</string>
+            <string name="Source"><![CDATA[-- UI przeciągania liny. Klikaj, gdy zmniejszający się pierścień dotknie
+-- środka (takt co 0,6 s). Serwer ocenia każde kliknięcie i przesuwa linę.
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local ContextActionService = game:GetService("ContextActionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+
+local UI = require(script.Parent.UI)
+local Effects = require(script.Parent.Effects)
+
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local S = Config.Steal
+
+local Tug = {}
+
+local gui: { [string]: any } = {}
+local active: any = nil
+
+local function now(): number
+	return workspace:GetServerTimeNow()
+end
+
+local function build()
+	local root = UI.root()
+	gui.panel = UI.make("Frame", {
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.new(0.5, 0, 0.62, 0),
+		Size = UDim2.new(0, 560, 0, 300),
+		BackgroundColor3 = Color3.fromRGB(25, 15, 15),
+		BackgroundTransparency = 0.1,
+		Visible = false,
+		ZIndex = 31,
+		Parent = root,
+	}, { UI.corner(16), UI.stroke(4, Color3.fromRGB(255, 70, 70)) })
+	gui.title = UI.label({
+		Position = UDim2.new(0, 16, 0, 8),
+		Size = UDim2.new(1, -32, 0, 34),
+		ZIndex = 32,
+		Text = "PRZECIĄGANIE LINY!",
+		TextColor3 = Color3.fromRGB(255, 90, 90),
+		Parent = gui.panel,
+	})
+	gui.sub = UI.label({
+		Position = UDim2.new(0, 16, 0, 42),
+		Size = UDim2.new(1, -32, 0, 22),
+		ZIndex = 32,
+		Text = "",
+		Parent = gui.panel,
+	})
+	gui.rope = UI.make("Frame", {
+		Position = UDim2.new(0, 30, 0, 76),
+		Size = UDim2.new(1, -60, 0, 26),
+		BackgroundColor3 = Color3.fromRGB(120, 90, 60),
+		ZIndex = 32,
+		Parent = gui.panel,
+	}, { UI.corner(8), UI.stroke(2) })
+	UI.label({
+		Position = UDim2.new(0, -26, 0, 0),
+		Size = UDim2.new(0, 24, 1, 0),
+		ZIndex = 33,
+		Text = "TY",
+		TextColor3 = Color3.fromRGB(120, 255, 140),
+		Parent = gui.rope,
+	})
+	gui.marker = UI.make("Frame", {
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.new(0.5, 0, 0.5, 0),
+		Size = UDim2.new(0, 16, 1.8, 0),
+		BackgroundColor3 = Color3.fromRGB(255, 60, 60),
+		ZIndex = 34,
+		Parent = gui.rope,
+	}, { UI.corner(4) })
+
+	gui.target = UI.make("Frame", {
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.new(0.5, 0, 0, 185),
+		Size = UDim2.new(0, 80, 0, 80),
+		BackgroundColor3 = Color3.fromRGB(255, 200, 60),
+		BackgroundTransparency = 0.3,
+		ZIndex = 32,
+		Parent = gui.panel,
+	}, { UI.corner(40) })
+	gui.ring = UI.make("Frame", {
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.new(0.5, 0, 0, 185),
+		Size = UDim2.new(0, 200, 0, 200),
+		BackgroundTransparency = 1,
+		ZIndex = 33,
+		Parent = gui.panel,
+	}, { UI.corner(100), UI.stroke(4, Color3.new(1, 1, 1)) })
+	gui.judge = UI.label({
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.new(0.5, 0, 0, 185),
+		Size = UDim2.new(0, 200, 0, 40),
+		ZIndex = 35,
+		Text = "",
+		Parent = gui.panel,
+	})
+	gui.hint = UI.label({
+		Position = UDim2.new(0, 16, 1, -34),
+		Size = UDim2.new(1, -150, 0, 26),
+		ZIndex = 32,
+		TextColor3 = Color3.fromRGB(220, 220, 220),
+		Text = "Klik / Spacja, gdy pierścień dotknie środka!",
+		Parent = gui.panel,
+	})
+	-- Duży przycisk dla dotyku (pełnoekranowy łapacz blokowałby gałkę ruchu)
+	gui.tapButton = UI.button("SZARP!", Color3.fromRGB(220, 50, 50), {
+		AnchorPoint = Vector2.new(1, 1),
+		Position = UDim2.new(1, -12, 1, -12),
+		Size = UDim2.new(0, 120, 0, 90),
+		ZIndex = 36,
+		Parent = gui.panel,
+	})
+end
+
+local function close()
+	if active and active.conn then
+		active.conn:Disconnect()
+	end
+	active = nil
+	gui.panel.Visible = false
+	ContextActionService:UnbindAction("MSB_Tug")
+end
+
+local function tap()
+	local a = active
+	if not a or a.over then
+		return
+	end
+	local t = now()
+	local beat = math.floor((t - a.firstBeat) / a.interval + 0.5) + 1
+	if beat < 1 or beat > a.maxBeats or a.tapped[beat] then
+		return
+	end
+	a.tapped[beat] = true
+	local offset = t - (a.firstBeat + (beat - 1) * a.interval)
+	Remotes.TugTap:FireServer(a.id, beat, offset)
+	Effects.play("Clank", 0.4, 1.6)
+end
+
+local function judgeText(mult: number): (string, Color3)
+	if mult >= S.PerfectMult then
+		return "PERFECT!", Color3.fromRGB(120, 255, 140)
+	elseif mult >= S.GoodMult then
+		return "Dobrze", Color3.fromRGB(255, 220, 80)
+	end
+	return "Pudło", Color3.fromRGB(255, 110, 110)
+end
+
+local function render()
+	local a = active
+	if not a then
+		return
+	end
+	local t = now()
+	if t < a.firstBeat then
+		gui.judge.Text = tostring(math.ceil(a.firstBeat - t))
+		gui.judge.TextColor3 = Color3.new(1, 1, 1)
+	end
+	-- Pierścień: maleje od 200 px do 80 px dokładnie w chwili taktu
+	local phase = ((t - a.firstBeat) / a.interval) % 1
+	local size = 80 + 120 * (1 - phase)
+	gui.ring.Size = UDim2.new(0, size, 0, size)
+	-- Pozycja liny z perspektywy gracza: wygrywasz, gdy znacznik idzie w lewo
+	local mine = if a.role == "attacker" then a.pos else -a.pos
+	gui.marker.Position = UDim2.new(math.clamp(0.5 - mine / (2 * a.threshold), 0, 1), 0, 0.5, 0)
+end
+
+function Tug.start(data: { [string]: any })
+	if active then
+		close()
+	end
+	active = {
+		id = data.id,
+		role = data.role,
+		firstBeat = data.firstBeat,
+		interval = data.interval,
+		maxBeats = data.maxBeats,
+		threshold = data.threshold,
+		pos = 0,
+		tapped = {},
+		over = false,
+		conn = nil,
+	}
+	local rarity = Config.Rarities[data.rarity] or Config.Rarities[1]
+	if data.role == "attacker" then
+		gui.title.Text = "KRADNIESZ!"
+		gui.sub.Text = "Wyrywasz " .. data.itemName .. " graczowi " .. data.opponent
+	else
+		gui.title.Text = "KTOŚ CIĘ OKRADA!"
+		gui.sub.Text = data.opponent .. " chce wyrwać: " .. data.itemName .. " · uciekaj do garażu albo trzymaj!"
+	end
+	gui.sub.TextColor3 = rarity.color
+	gui.judge.Text = ""
+	gui.panel.Visible = true
+	Effects.play("Steal", 0.8)
+	Effects.shake(2, 0.4)
+	UI.flash(Color3.fromRGB(255, 60, 60), 0.35)
+	ContextActionService:BindActionAtPriority("MSB_Tug", function(_, state)
+		if state == Enum.UserInputState.Begin then
+			tap()
+		end
+		return Enum.ContextActionResult.Sink
+	end, false, Enum.ContextActionPriority.High.Value + 1, Enum.KeyCode.Space, Enum.KeyCode.ButtonA, Enum.KeyCode.ButtonR2)
+	active.conn = RunService.RenderStepped:Connect(render)
+end
+
+function Tug.update(data: { [string]: any })
+	local a = active
+	if not a or a.id ~= data.id then
+		return
+	end
+	a.pos = data.pos
+	local mine = if a.role == "attacker" then data.ja else data.jd
+	local text, color = judgeText(mine)
+	gui.judge.Text = text
+	gui.judge.TextColor3 = color
+end
+
+function Tug.finish(data: { [string]: any })
+	local a = active
+	if not a or a.id ~= data.id then
+		return
+	end
+	a.over = true
+	gui.judge.Text = if data.won then "WYGRANA!" else "PRZEGRANA!"
+	gui.judge.TextColor3 = if data.won then Color3.fromRGB(120, 255, 140) else Color3.fromRGB(255, 90, 90)
+	if data.won then
+		Effects.play("Catch", 0.8)
+	else
+		Effects.play("Snap", 0.8)
+	end
+	task.delay(1.4, function()
+		if active == a then
+			close()
+		end
+	end)
+end
+
+function Tug.isActive(): boolean
+	return active ~= nil
+end
+
+function Tug.init()
+	build()
+	gui.tapButton.MouseButton1Down:Connect(tap)
+	UserInputService.InputBegan:Connect(function(input, processed)
+		if not processed and input.UserInputType == Enum.UserInputType.MouseButton1 then
+			tap()
+		end
+	end)
+	Remotes.TugStart.OnClientEvent:Connect(Tug.start)
+	Remotes.TugUpdate.OnClientEvent:Connect(Tug.update)
+	Remotes.TugEnd.OnClientEvent:Connect(Tug.finish)
+end
+
+return Tug
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="51">
+          <Properties>
+            <string name="Name">UI</string>
+            <string name="Source"><![CDATA[-- HUD, powiadomienia i banery alertów. Całe UI jest tworzone kodem.
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local Format = require(Shared.Format)
+local Geo = require(Shared.Geo)
+
+local player = Players.LocalPlayer
+
+local UI = {}
+
+local FONT = Enum.Font.FredokaOne
+
+function UI.make(className: string, props: { [string]: any }, children: { Instance }?): any
+	local inst = Instance.new(className)
+	for k, v in pairs(props) do
+		if k ~= "Parent" then
+			(inst :: any)[k] = v
+		end
+	end
+	for _, child in ipairs(children or {}) do
+		child.Parent = inst
+	end
+	if props.Parent then
+		inst.Parent = props.Parent
+	end
+	return inst
+end
+
+function UI.corner(radius: number?): UICorner
+	return UI.make("UICorner", { CornerRadius = UDim.new(0, radius or 10) })
+end
+
+function UI.stroke(thickness: number?, color: Color3?): UIStroke
+	return UI.make("UIStroke", { Thickness = thickness or 2, Color = color or Color3.new(0, 0, 0), ApplyStrokeMode = Enum.ApplyStrokeMode.Border })
+end
+
+function UI.label(props: { [string]: any }): TextLabel
+	local base = {
+		BackgroundTransparency = 1,
+		Font = FONT,
+		TextColor3 = Color3.new(1, 1, 1),
+		TextScaled = true,
+		TextStrokeTransparency = 0.4,
+	}
+	for k, v in pairs(props) do
+		base[k] = v
+	end
+	return UI.make("TextLabel", base)
+end
+
+function UI.button(text: string, color: Color3, props: { [string]: any }): TextButton
+	local base = {
+		Text = text,
+		Font = FONT,
+		TextScaled = true,
+		TextColor3 = Color3.new(1, 1, 1),
+		BackgroundColor3 = color,
+		AutoButtonColor = true,
+	}
+	for k, v in pairs(props) do
+		base[k] = v
+	end
+	local b = UI.make("TextButton", base, { UI.corner(10), UI.stroke(2) })
+	UI.make("UIPadding", {
+		PaddingLeft = UDim.new(0, 6),
+		PaddingRight = UDim.new(0, 6),
+		PaddingTop = UDim.new(0, 4),
+		PaddingBottom = UDim.new(0, 4),
+		Parent = b,
+	})
+	return b
+end
+
+local gui: ScreenGui
+local overlay: ScreenGui
+local refs: { [string]: any } = {}
+
+function UI.root(): ScreenGui
+	return gui
+end
+
+-- Warstwa pełnoekranowa bez UIScale (łapacz dotyku minigry, błysk ekranu)
+function UI.overlay(): ScreenGui
+	return overlay
+end
+
+function UI.build()
+	gui = UI.make("ScreenGui", {
+		Name = "MSB_HUD",
+		ResetOnSpawn = false,
+		IgnoreGuiInset = false,
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+		Parent = player:WaitForChild("PlayerGui"),
+	})
+	overlay = UI.make("ScreenGui", {
+		Name = "MSB_Overlay",
+		ResetOnSpawn = false,
+		IgnoreGuiInset = true,
+		DisplayOrder = 5,
+		Parent = player:WaitForChild("PlayerGui"),
+	})
+	-- Skalowanie całego HUD na małych ekranach (telefony)
+	local scale = UI.make("UIScale", { Parent = gui })
+	local function rescale()
+		local vp = workspace.CurrentCamera.ViewportSize
+		scale.Scale = math.clamp(math.min(vp.X / 1100, vp.Y / 650), 0.5, 1)
+	end
+	workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(rescale)
+	rescale()
+
+	-- Panel statystyk (lewy górny róg)
+	local panel = UI.make("Frame", {
+		Name = "Stats",
+		Position = UDim2.new(0, 10, 0, 10),
+		Size = UDim2.new(0, 250, 0, 168),
+		BackgroundColor3 = Color3.fromRGB(20, 20, 28),
+		BackgroundTransparency = 0.25,
+		Parent = gui,
+	}, { UI.corner(12), UI.stroke(2, Color3.fromRGB(255, 200, 60)) })
+	UI.make("UIListLayout", { Padding = UDim.new(0, 2), SortOrder = Enum.SortOrder.LayoutOrder, Parent = panel })
+	UI.make("UIPadding", { PaddingLeft = UDim.new(0, 8), PaddingTop = UDim.new(0, 6), PaddingRight = UDim.new(0, 8), Parent = panel })
+	local function row(name: string, order: number, color: Color3?, height: number?): TextLabel
+		local l = UI.label({
+			Name = name,
+			LayoutOrder = order,
+			Size = UDim2.new(1, 0, 0, height or 22),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextColor3 = color or Color3.new(1, 1, 1),
+			Text = "",
+			Parent = panel,
+		})
+		return l
+	end
+	refs.cash = row("Cash", 1, Color3.fromRGB(120, 255, 120), 30)
+	refs.cps = row("CPS", 2, Color3.fromRGB(255, 230, 120))
+	refs.pending = row("Pending", 3, Color3.fromRGB(160, 220, 255))
+	refs.carried = row("Carried", 4)
+	refs.magnet = row("Magnet", 5, Color3.fromRGB(255, 160, 160))
+	refs.zone = row("Zone", 6)
+
+	refs.protected = UI.label({
+		Name = "Protected",
+		Position = UDim2.new(0, 10, 0, 184),
+		Size = UDim2.new(0, 250, 0, 26),
+		BackgroundColor3 = Color3.fromRGB(40, 120, 60),
+		BackgroundTransparency = 0.1,
+		Text = "L · Ochrona Nowicjusza",
+		Visible = false,
+		Parent = gui,
+	})
+	UI.corner(8).Parent = refs.protected
+
+	-- Przyciski (prawa strona)
+	refs.shopButton = UI.button("SKLEP", Color3.fromRGB(255, 170, 30), {
+		Position = UDim2.new(1, -140, 0.35, 0),
+		Size = UDim2.new(0, 130, 0, 50),
+		Parent = gui,
+	})
+	refs.indexButton = UI.button("INDEX", Color3.fromRGB(120, 90, 255), {
+		Position = UDim2.new(1, -140, 0.35, 60),
+		Size = UDim2.new(0, 130, 0, 50),
+		Parent = gui,
+	})
+	refs.devButton = UI.button("DEV x10 $", Color3.fromRGB(200, 60, 60), {
+		Position = UDim2.new(1, -140, 0.35, 120),
+		Size = UDim2.new(0, 130, 0, 40),
+		Visible = RunService:IsStudio() and Config.Debug.StudioCheats,
+		Parent = gui,
+	})
+
+	-- Pasek siły rzutu
+	refs.charge = UI.make("Frame", {
+		Name = "Charge",
+		AnchorPoint = Vector2.new(0.5, 1),
+		Position = UDim2.new(0.5, 0, 1, -120),
+		Size = UDim2.new(0, 300, 0, 26),
+		BackgroundColor3 = Color3.fromRGB(30, 30, 35),
+		Visible = false,
+		Parent = gui,
+	}, { UI.corner(8), UI.stroke(2) })
+	UI.make("Frame", {
+		Name = "Perfect",
+		Position = UDim2.new(Config.Fishing.PerfectCastMin, 0, 0, 0),
+		Size = UDim2.new(Config.Fishing.PerfectCastMax - Config.Fishing.PerfectCastMin, 0, 1, 0),
+		BackgroundColor3 = Color3.fromRGB(60, 220, 90),
+		BorderSizePixel = 0,
+		Parent = refs.charge,
+	})
+	refs.chargeNeedle = UI.make("Frame", {
+		Name = "Needle",
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.new(0, 0, 0.5, 0),
+		Size = UDim2.new(0, 6, 1.4, 0),
+		BackgroundColor3 = Color3.new(1, 1, 1),
+		Parent = refs.charge,
+	}, { UI.corner(3) })
+	UI.label({
+		Position = UDim2.new(0, 0, -1.1, 0),
+		Size = UDim2.new(1, 0, 1, 0),
+		Text = "Puść na zielonym = Perfect Cast (+10% Luck)",
+		Parent = refs.charge,
+	})
+
+	-- Powiadomienia (dół ekranu)
+	refs.toasts = UI.make("Frame", {
+		Name = "Toasts",
+		AnchorPoint = Vector2.new(0.5, 1),
+		Position = UDim2.new(0.5, 0, 1, -170),
+		Size = UDim2.new(0, 520, 0, 150),
+		BackgroundTransparency = 1,
+		Parent = gui,
+	})
+	UI.make("UIListLayout", {
+		VerticalAlignment = Enum.VerticalAlignment.Bottom,
+		HorizontalAlignment = Enum.HorizontalAlignment.Center,
+		Padding = UDim.new(0, 4),
+		SortOrder = Enum.SortOrder.LayoutOrder,
+		Parent = refs.toasts,
+	})
+
+	-- Baner alertów (góra ekranu)
+	refs.banner = UI.make("Frame", {
+		Name = "Banner",
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, -140),
+		Size = UDim2.new(0, 620, 0, 110),
+		BackgroundColor3 = Color3.fromRGB(20, 20, 25),
+		BackgroundTransparency = 0.1,
+		Parent = gui,
+	}, { UI.corner(16) })
+	refs.bannerStroke = UI.stroke(4, Color3.new(1, 1, 1))
+	refs.bannerStroke.Parent = refs.banner
+	refs.bannerTitle = UI.label({
+		Position = UDim2.new(0, 10, 0, 6),
+		Size = UDim2.new(1, -20, 0.55, 0),
+		Text = "",
+		Parent = refs.banner,
+	})
+	refs.bannerText = UI.label({
+		Position = UDim2.new(0, 10, 0.58, 0),
+		Size = UDim2.new(1, -20, 0.36, 0),
+		Text = "",
+		Parent = refs.banner,
+	})
+
+	-- Wskaźnik burzy
+	refs.storm = UI.label({
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, 4),
+		Size = UDim2.new(0, 360, 0, 30),
+		BackgroundColor3 = Color3.fromRGB(90, 50, 200),
+		BackgroundTransparency = 0.1,
+		Text = "BURZA MAGNETYCZNA · LUCK x" .. Config.Events.StormLuck,
+		Visible = false,
+		Parent = gui,
+	})
+	UI.corner(8).Parent = refs.storm
+
+	-- Błysk ekranu
+	refs.flash = UI.make("Frame", {
+		Name = "Flash",
+		Size = UDim2.fromScale(1, 1),
+		BackgroundColor3 = Color3.new(1, 1, 1),
+		BackgroundTransparency = 1,
+		ZIndex = 50,
+		Parent = overlay,
+	})
+
+	return refs
+end
+
+function UI.refs()
+	return refs
+end
+
+function UI.refreshStats()
+	local cash = player:GetAttribute("Cash") or 0
+	local cps = player:GetAttribute("CPS") or 0
+	local pending = player:GetAttribute("Pending") or 0
+	local carried = player:GetAttribute("Carried") or 0
+	local capacity = player:GetAttribute("Capacity") or 1
+	local magnet = Config.Magnets[player:GetAttribute("Magnet") or 1]
+	refs.cash.Text = "Kasa: " .. Format.money(cash)
+	refs.cps.Text = "Dochód: " .. Format.money(cps) .. "/s"
+	refs.pending.Text = "W Kasie garażu: " .. Format.money(pending)
+	refs.carried.Text = "Niesiesz: " .. carried .. "/" .. capacity
+	refs.carried.TextColor3 = if carried >= capacity then Color3.fromRGB(255, 120, 120) else Color3.new(1, 1, 1)
+	refs.magnet.Text = "Magnes: " .. (magnet and magnet.name or "?")
+	refs.protected.Visible = player:GetAttribute("Protected") == true
+	refs.storm.Visible = workspace:GetAttribute("Storm") == true
+end
+
+function UI.refreshZone()
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if not root then
+		return
+	end
+	local text, safe = Geo.zoneLabel(root.Position)
+	refs.zone.Text = text
+	refs.zone.TextColor3 = if safe then Color3.fromRGB(120, 255, 140) else Color3.fromRGB(255, 110, 110)
+end
+
+local toastColors = {
+	info = Color3.fromRGB(40, 40, 50),
+	good = Color3.fromRGB(30, 110, 50),
+	bad = Color3.fromRGB(140, 35, 35),
+}
+local toastOrder = 0
+
+function UI.toast(text: string, kind: string?)
+	toastOrder += 1
+	local t = UI.label({
+		LayoutOrder = toastOrder,
+		Size = UDim2.new(1, 0, 0, 30),
+		BackgroundColor3 = toastColors[kind or "info"] or toastColors.info,
+		BackgroundTransparency = 0.15,
+		Text = text,
+		TextStrokeTransparency = 0.6,
+		Parent = refs.toasts,
+	})
+	UI.corner(8).Parent = t
+	UI.make("UIPadding", { PaddingLeft = UDim.new(0, 8), PaddingRight = UDim.new(0, 8), Parent = t })
+	local children = refs.toasts:GetChildren()
+	local labels = {}
+	for _, c in ipairs(children) do
+		if c:IsA("TextLabel") then
+			table.insert(labels, c)
+		end
+	end
+	if #labels > 4 then
+		table.sort(labels, function(a, b)
+			return a.LayoutOrder < b.LayoutOrder
+		end)
+		labels[1]:Destroy()
+	end
+	task.delay(4, function()
+		if t.Parent then
+			TweenService:Create(t, TweenInfo.new(0.4), { BackgroundTransparency = 1, TextTransparency = 1 }):Play()
+			task.wait(0.4)
+			t:Destroy()
+		end
+	end)
+end
+
+local bannerToken = 0
+function UI.banner(title: string, text: string, color: Color3, seconds: number?)
+	bannerToken += 1
+	local my = bannerToken
+	refs.bannerTitle.Text = title
+	refs.bannerTitle.TextColor3 = color
+	refs.bannerText.Text = text
+	refs.bannerStroke.Color = color
+	TweenService:Create(refs.banner, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+		Position = UDim2.new(0.5, 0, 0, 40),
+	}):Play()
+	task.delay(seconds or 4, function()
+		if bannerToken == my then
+			TweenService:Create(refs.banner, TweenInfo.new(0.3), { Position = UDim2.new(0.5, 0, 0, -140) }):Play()
+		end
+	end)
+end
+
+function UI.flash(color: Color3, strength: number?)
+	refs.flash.BackgroundColor3 = color
+	refs.flash.BackgroundTransparency = 1 - (strength or 0.6)
+	TweenService:Create(refs.flash, TweenInfo.new(0.8), { BackgroundTransparency = 1 }):Play()
+end
+
+return UI
+]]></string>
+          </Properties>
+        </Item>
+      </Item>
+    </Item>
+  </Item>
+  <Item class="Workspace" referent="52">
+    <Properties>
+      <string name="Name">Workspace</string>
+      <float name="Gravity">196.2</float>
+      <bool name="NeedsPivotMigration">false</bool>
+    </Properties>
+  </Item>
+</roblox>

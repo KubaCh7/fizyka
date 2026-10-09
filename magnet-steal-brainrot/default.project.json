@@ -1,0 +1,57 @@
+{
+  "name": "MagnetStealBrainrot",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "src/shared"
+      },
+      "Remotes": {
+        "$className": "Folder",
+        "CastRequest": { "$className": "RemoteEvent" },
+        "FishStart": { "$className": "RemoteEvent" },
+        "FishResult": { "$className": "RemoteEvent" },
+        "StealRequest": { "$className": "RemoteEvent" },
+        "TugStart": { "$className": "RemoteEvent" },
+        "TugTap": { "$className": "RemoteEvent" },
+        "TugUpdate": { "$className": "RemoteEvent" },
+        "TugEnd": { "$className": "RemoteEvent" },
+        "PlaceBanana": { "$className": "RemoteEvent" },
+        "UseShield": { "$className": "RemoteEvent" },
+        "Ragdoll": { "$className": "RemoteEvent" },
+        "Notify": { "$className": "RemoteEvent" },
+        "Alert": { "$className": "RemoteEvent" },
+        "IndexUpdate": { "$className": "RemoteEvent" },
+        "Purchase": { "$className": "RemoteFunction" },
+        "DevCheat": { "$className": "RemoteEvent" }
+      }
+    },
+    "ServerScriptService": {
+      "GameServer": {
+        "$path": "src/server"
+      }
+    },
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "GameClient": {
+          "$path": "src/client"
+        }
+      }
+    },
+    "Workspace": {
+      "$properties": {
+        "Gravity": 196.2
+      }
+    },
+    "Lighting": {
+      "$properties": {
+        "ClockTime": 14.5,
+        "Brightness": 2
+      }
+    },
+    "SoundService": {},
+    "Players": {},
+    "StarterGui": {},
+    "StarterPack": {}
+  }
+}
